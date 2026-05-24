@@ -14,6 +14,15 @@ function isPublicPath(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (
+    pathname === "/api/sync/trigger" &&
+    request.method === "POST" &&
+    request.headers.get("X-Cron-Secret") === process.env.CRON_SECRET &&
+    process.env.CRON_SECRET
+  ) {
+    return NextResponse.next();
+  }
+
   if (isPublicPath(pathname)) {
     return NextResponse.next();
   }

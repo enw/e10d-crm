@@ -9,21 +9,33 @@ export function SyncNowButton() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
 
   async function onClick() {
     setPending(true);
     setMessage(null);
+    setIsError(false);
 
     try {
       const result = await syncNowAction();
-      setMessage(
-        `Synced ${result.contacts} contacts and ${result.events} calendar events.`,
+      const failedAccounts = result.accounts.filter(
+        (account) => account.contactsError || account.calendarError,
       );
+
+      if (failedAccounts.length > 0) {
+        setIsError(true);
+        setMessage(
+          `Synced ${result.contacts} contacts and ${result.events} events with ${failedAccounts.length} account error(s). See account details below.`,
+        );
+      } else {
+        setMessage(
+          `Synced ${result.contacts} contacts and ${result.events} calendar events.`,
+        );
+      }
       router.refresh();
     } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Sync failed",
-      );
+      setIsError(true);
+      setMessage(error instanceof Error ? error.message : "Sync failed");
     } finally {
       setPending(false);
     }
@@ -39,7 +51,11 @@ export function SyncNowButton() {
       >
         {pending ? "Syncing…" : "Sync now"}
       </button>
-      {message ? <p className="text-sm text-zinc-600">{message}</p> : null}
+      {message ? (
+        <p className={`text-sm ${isError ? "text-red-600" : "text-zinc-600"}`}>
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

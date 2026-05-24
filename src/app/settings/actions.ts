@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { disconnectGoogleAccount } from "@/lib/google/accounts";
-import { syncAllGoogleAccounts } from "@/lib/sync/calendar";
+import { syncAllGoogleAccounts } from "@/lib/sync/runner";
 
 export async function disconnectGoogleAccountAction(accountId: string) {
   await disconnectGoogleAccount(accountId);

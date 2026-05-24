@@ -80,6 +80,21 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
       <section className="mt-8 space-y-4">
         <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-medium text-zinc-900">Data export</h2>
+          <a
+            href="/api/export/contacts"
+            className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
+          >
+            Download JSON
+          </a>
+        </div>
+        <p className="text-sm text-zinc-500">
+          Export contacts, tags, notes, interactions, enrichment, and overrides.
+        </p>
+      </section>
+
+      <section className="mt-8 space-y-4">
+        <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-medium text-zinc-900">Google accounts</h2>
           <ConnectGoogleButton />
         </div>
@@ -93,13 +108,35 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             {accounts.map((account) => (
               <li
                 key={account.id}
-                className="flex items-center justify-between gap-4 px-4 py-3"
+                className="flex items-start justify-between gap-4 px-4 py-3"
               >
-                <div>
+                <div className="space-y-1">
                   <p className="font-medium text-zinc-900">{account.email}</p>
                   <p className="text-xs text-zinc-500">
                     Connected {account.connectedAt.toLocaleString()}
                   </p>
+                  <p className="text-xs text-zinc-500">
+                    Contacts sync:{" "}
+                    {account.lastContactsSyncAt
+                      ? account.lastContactsSyncAt.toLocaleString()
+                      : "never"}
+                  </p>
+                  <p className="text-xs text-zinc-500">
+                    Calendar sync:{" "}
+                    {account.lastCalendarSyncAt
+                      ? account.lastCalendarSyncAt.toLocaleString()
+                      : "never"}
+                  </p>
+                  {account.lastContactsSyncError ? (
+                    <p className="text-xs text-red-600">
+                      Contacts error: {account.lastContactsSyncError}
+                    </p>
+                  ) : null}
+                  {account.lastCalendarSyncError ? (
+                    <p className="text-xs text-red-600">
+                      Calendar error: {account.lastCalendarSyncError}
+                    </p>
+                  ) : null}
                 </div>
                 <DisconnectGoogleAccountButton
                   accountId={account.id}

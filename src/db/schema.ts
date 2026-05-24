@@ -28,6 +28,8 @@ export const googleAccounts = pgTable("google_accounts", {
   scopes: jsonb("scopes").$type<string[]>().notNull().default([]),
   lastContactsSyncAt: timestamp("last_contacts_sync_at", { withTimezone: true }),
   lastCalendarSyncAt: timestamp("last_calendar_sync_at", { withTimezone: true }),
+  lastContactsSyncError: text("last_contacts_sync_error"),
+  lastCalendarSyncError: text("last_calendar_sync_error"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -161,9 +163,28 @@ export const interactions = pgTable("interactions", {
     .defaultNow(),
 });
 
+export const enrichmentRunStatus = pgEnum("enrichment_run_status", [
+  "pending",
+  "success",
+  "failed",
+]);
+
+export const enrichmentRuns = pgTable("enrichment_runs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  contactId: uuid("contact_id")
+    .notNull()
+    .references(() => contacts.id, { onDelete: "cascade" }),
+  source: text("source").notNull(),
+  status: enrichmentRunStatus("status").notNull().default("pending"),
+  result: jsonb("result").$type<Record<string, unknown>>(),
+  errorMessage: text("error_message"),
+  runAt: timestamp("run_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type SchemaMeta = typeof schemaMeta.$inferSelect;
 export type GoogleAccount = typeof googleAccounts.$inferSelect;
 export type Contact = typeof contacts.$inferSelect;
 export type GoogleContactLink = typeof googleContactLinks.$inferSelect;
 export type Tag = typeof tags.$inferSelect;
 export type Interaction = typeof interactions.$inferSelect;
+export type EnrichmentRun = typeof enrichmentRuns.$inferSelect;

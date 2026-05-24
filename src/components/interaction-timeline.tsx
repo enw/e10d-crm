@@ -8,6 +8,8 @@ function formatInteractionLabel(interaction: Interaction): string {
       return `Added tag: ${interaction.content ?? "unknown"}`;
     case "tag_removed":
       return `Removed tag: ${interaction.content ?? "unknown"}`;
+    case "enrichment":
+      return `Enriched via ${interaction.content ?? "provider"}`;
     default:
       return interaction.content ?? interaction.type;
   }

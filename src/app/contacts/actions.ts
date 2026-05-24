@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { updateContact } from "@/lib/contacts/update";
 import { addNote } from "@/lib/interactions";
 import type { ContactUpdateInput } from "@/lib/sync/user-overrides";
+import { enrichContact } from "@/lib/enrichment/pipeline";
 import { assignTagToContact, removeTagFromContact } from "@/lib/tags";
 
 export async function assignTagAction(contactId: string, tagName: string) {
@@ -33,4 +34,10 @@ export async function updateContactAction(
   revalidatePath("/contacts");
   revalidatePath(`/contacts/${contactId}`);
   revalidatePath(`/contacts/${contactId}/edit`);
+}
+
+export async function enrichContactAction(contactId: string) {
+  await enrichContact(contactId);
+  revalidatePath("/contacts");
+  revalidatePath(`/contacts/${contactId}`);
 }

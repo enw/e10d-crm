@@ -16,6 +16,10 @@ export type GoogleAccountSummary = {
   scopes: string[];
   connectedAt: Date;
   tokenExpiresAt: Date | null;
+  lastContactsSyncAt: Date | null;
+  lastCalendarSyncAt: Date | null;
+  lastContactsSyncError: string | null;
+  lastCalendarSyncError: string | null;
 };
 
 export type UpsertGoogleAccountInput = {
@@ -58,6 +62,10 @@ export async function upsertGoogleAccount(
       scopes: googleAccounts.scopes,
       createdAt: googleAccounts.createdAt,
       tokenExpiresAt: googleAccounts.tokenExpiresAt,
+      lastContactsSyncAt: googleAccounts.lastContactsSyncAt,
+      lastCalendarSyncAt: googleAccounts.lastCalendarSyncAt,
+      lastContactsSyncError: googleAccounts.lastContactsSyncError,
+      lastCalendarSyncError: googleAccounts.lastCalendarSyncError,
     });
 
   return {
@@ -66,6 +74,10 @@ export async function upsertGoogleAccount(
     scopes: row.scopes,
     connectedAt: row.createdAt,
     tokenExpiresAt: row.tokenExpiresAt,
+    lastContactsSyncAt: row.lastContactsSyncAt,
+    lastCalendarSyncAt: row.lastCalendarSyncAt,
+    lastContactsSyncError: row.lastContactsSyncError,
+    lastCalendarSyncError: row.lastCalendarSyncError,
   };
 }
 
@@ -78,6 +90,10 @@ export async function listGoogleAccounts(): Promise<GoogleAccountSummary[]> {
       scopes: googleAccounts.scopes,
       createdAt: googleAccounts.createdAt,
       tokenExpiresAt: googleAccounts.tokenExpiresAt,
+      lastContactsSyncAt: googleAccounts.lastContactsSyncAt,
+      lastCalendarSyncAt: googleAccounts.lastCalendarSyncAt,
+      lastContactsSyncError: googleAccounts.lastContactsSyncError,
+      lastCalendarSyncError: googleAccounts.lastCalendarSyncError,
     })
     .from(googleAccounts)
     .orderBy(desc(googleAccounts.createdAt));
@@ -88,6 +104,10 @@ export async function listGoogleAccounts(): Promise<GoogleAccountSummary[]> {
     scopes: row.scopes,
     connectedAt: row.createdAt,
     tokenExpiresAt: row.tokenExpiresAt,
+    lastContactsSyncAt: row.lastContactsSyncAt,
+    lastCalendarSyncAt: row.lastCalendarSyncAt,
+    lastContactsSyncError: row.lastContactsSyncError,
+    lastCalendarSyncError: row.lastCalendarSyncError,
   }));
 }
 

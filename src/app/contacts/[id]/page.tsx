@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { EnrichContactButton } from "@/components/enrich-contact-button";
 import { ContactNoteForm } from "@/components/contact-note-form";
 import { ContactTagManager } from "@/components/contact-tag-manager";
 import { InteractionTimeline } from "@/components/interaction-timeline";
 import { LogoutButton } from "@/components/logout-button";
+import { UpcomingMeetings } from "@/components/upcoming-meetings";
+import { getLatestEnrichmentRun } from "@/lib/enrichment/pipeline";
 import { listInteractionsForContact } from "@/lib/interactions";
+import { listUpcomingEventsForContact } from "@/lib/sync/calendar";
 import { getContactById } from "@/lib/sync/contacts";
 import { listTagsForContact } from "@/lib/tags";
 
@@ -32,6 +36,23 @@ function FieldList({ label, values }: { label: string; values: string[] }) {
   );
 }
 
+function readEnrichmentUrl(
+  blob: Record<string, unknown> | null,
+  key: string,
+): string | null {
+  if (!blob) {
+    return null;
+  }
+
+  const leadpure = blob.leadpure;
+  if (!leadpure || typeof leadpure !== "object") {
+    return null;
+  }
+
+  const value = (leadpure as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : null;
+}
+
 export default async function ContactDossierPage({ params }: ContactPageProps) {
   const { id } = await params;
   const contact = await getContactById(id);
@@ -40,10 +61,22 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
     notFound();
   }
 
-  const [tags, interactions] = await Promise.all([
-    listTagsForContact(id),
-    listInteractionsForContact(id),
-  ]);
+  const [tags, interactions, upcomingEvents, latestEnrichment] =
+    await Promise.all([
+      listTagsForContact(id),
+      listInteractionsForContact(id),
+      listUpcomingEventsForContact(id),
+      getLatestEnrichmentRun(id),
+    ]);
+
+  const enrichmentBlob =
+    (contact.enrichmentBlob as Record<string, unknown> | null) ?? null;
+  const linkedinUrl =
+    readEnrichmentUrl(enrichmentBlob, "linkedinUrl") ??
+    readEnrichmentUrl(enrichmentBlob, "linkedin");
+  const twitterUrl =
+    readEnrichmentUrl(enrichmentBlob, "twitterUrl") ??
+    readEnrichmentUrl(enrichmentBlob, "twitter");
   const title = contact.displayName || contact.emails[0] || "Unknown contact";
 
   return (
@@ -95,6 +128,13 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
         ) : null}
 
         <div>
+          <h2 className="text-sm font-medium text-zinc-500">Upcoming meetings</h2>
+          <div className="mt-2">
+            <UpcomingMeetings events={upcomingEvents} />
+          </div>
+        </div>
+
+        <div>
           <h2 className="text-sm font-medium text-zinc-500">Tags</h2>
           <div className="mt-2">
             <ContactTagManager contactId={contact.id} tags={tags} />
@@ -115,13 +155,52 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-4">
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           <h2 className="text-sm font-medium text-zinc-700">Enrichment</h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            {contact.enrichmentBlob
-              ? "Enrichment data is stored; pipeline UI arrives in a later ticket."
-              : "Not enriched yet. LeadPure integration lands in T13."}
-          </p>
+          {enrichmentBlob ? (
+            <div className="mt-2 space-y-1 text-sm text-zinc-600">
+              {latestEnrichment ? (
+                <p>
+                  Last run {latestEnrichment.runAt.toLocaleString()} ·{" "}
+                  {latestEnrichment.status}
+                </p>
+              ) : null}
+              {linkedinUrl ? (
+                <p>
+                  LinkedIn:{" "}
+                  <a
+                    href={linkedinUrl}
+                    className="text-zinc-900 underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {linkedinUrl}
+                  </a>
+                </p>
+              ) : null}
+              {twitterUrl ? (
+                <p>
+                  Twitter/X:{" "}
+                  <a
+                    href={twitterUrl}
+                    className="text-zinc-900 underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {twitterUrl}
+                  </a>
+                </p>
+              ) : null}
+            </div>
+          ) : (
+            <p className="mt-1 text-sm text-zinc-500">
+              Not enriched yet. Run LeadPure to populate company, title, and
+              social profiles.
+            </p>
+          )}
+          <div className="mt-3">
+            <EnrichContactButton contactId={contact.id} />
+          </div>
         </div>
       </section>
     </main>

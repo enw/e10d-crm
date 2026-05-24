@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, gte } from "drizzle-orm";
 import { google } from "googleapis";
 
 import { getDb } from "@/db";
@@ -240,22 +240,45 @@ export async function listCalendarEvents(): Promise<CalendarEventListItem[]> {
   return rows;
 }
 
-export async function syncAllGoogleAccounts(): Promise<{
-  contacts: number;
-  events: number;
-}> {
+export type ContactCalendarEvent = {
+  id: string;
+  title: string | null;
+  startTime: Date | null;
+  endTime: Date | null;
+  accountEmail: string;
+};
+
+export async function listUpcomingEventsForContact(
+  contactId: string,
+  limit = 10,
+): Promise<ContactCalendarEvent[]> {
   const db = getDb();
-  const accounts = await db.select({ id: googleAccounts.id }).from(googleAccounts);
+  const now = new Date();
 
-  let contactsSynced = 0;
-  let eventsSynced = 0;
+  return db
+    .select({
+      id: calendarEvents.id,
+      title: calendarEvents.title,
+      startTime: calendarEvents.startTime,
+      endTime: calendarEvents.endTime,
+      accountEmail: googleAccounts.email,
+    })
+    .from(calendarEvents)
+    .innerJoin(
+      googleAccounts,
+      eq(calendarEvents.googleAccountId, googleAccounts.id),
+    )
+    .where(
+      and(
+        eq(calendarEvents.linkedContactId, contactId),
+        gte(calendarEvents.startTime, now),
+      ),
+    )
+    .orderBy(asc(calendarEvents.startTime))
+    .limit(limit);
+}
 
-  const { syncContactsForAccount } = await import("@/lib/sync/contacts");
-
-  for (const account of accounts) {
-    contactsSynced += await syncContactsForAccount(account.id);
-    eventsSynced += await syncCalendarForAccount(account.id);
-  }
-
-  return { contacts: contactsSynced, events: eventsSynced };
+export async function syncAllGoogleAccounts() {
+  const { syncAllGoogleAccounts: runSync } = await import("@/lib/sync/runner");
+  return runSync();
 }

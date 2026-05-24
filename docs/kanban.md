@@ -36,12 +36,12 @@ flowchart LR
   T08:::done --> T09:::done
   T09:::done --> T10:::done
   T04:::done --> T11:::done
-  T11:::done --> T12:::open
-  T08:::done --> T13:::open
-  T13:::open --> T14:::open
-  T09:::done --> T15:::open
-  T04:::done --> T16:::open
-  T11:::done --> T16:::open
+  T11:::done --> T12:::done
+  T08:::done --> T13:::done
+  T13:::done --> T14:::open
+  T09:::done --> T15:::done
+  T04:::done --> T16:::done
+  T11:::done --> T16:::done
 
   classDef done fill:#22c55e,color:#fff,stroke:#16a34a
   classDef open fill:#e5e7eb,color:#111827,stroke:#9ca3af
@@ -262,7 +262,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Ready |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | <span style="color:#16a34a">T11</span>, <span style="color:#16a34a">T08</span> |
 | **User stories** | US-13, US-8 (calendar on dossier) |
@@ -270,9 +270,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** Match attendee emails to contacts; `linked_contact_id` on events; show upcoming linked events on dossier; link from calendar row to contact.
 
 **Acceptance criteria:**
-- [ ] Event with known attendee email links to contact
-- [ ] Dossier shows upcoming meetings with this contact
-- [ ] Calendar row links to contact dossier when linked
+- [x] Event with known attendee email links to contact
+- [x] Dossier shows upcoming meetings with this contact
+- [x] Calendar row links to contact dossier when linked
 
 ---
 
@@ -280,7 +280,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Ready |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | <span style="color:#16a34a">T08</span> |
 | **User stories** | US-10, US-11 (partial) |
@@ -288,10 +288,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** Enricher plugin interface, LeadPure provider, `enrichment_runs` table, "Enrich" button on dossier, merge into `enrichment_blob` + display fields (respecting `user_overrides`).
 
 **Acceptance criteria:**
-- [ ] Trigger enrichment on one contact from dossier
-- [ ] Success populates company/title/location/social where available
-- [ ] `enrichment` interaction logged
-- [ ] LeadPure HTTP mocked in tests
+- [x] Trigger enrichment on one contact from dossier
+- [x] Success populates company/title/location/social where available
+- [x] `enrichment` interaction logged
+- [x] LeadPure HTTP mocked in tests
 
 ---
 
@@ -299,9 +299,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Ready |
 | **Type** | AFK |
-| **Blocked by** | #13 |
+| **Blocked by** | <span style="color:#16a34a">T13</span> |
 | **User stories** | US-11 |
 
 **What to build:** Batch enrich action (settings or dossier list select), chunked processing, exponential backoff (1s → 60s, 5 retries), per-contact status in `enrichment_runs`.
@@ -318,7 +318,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Ready |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | <span style="color:#16a34a">T09</span> |
 | **User stories** | US-15 |
@@ -326,9 +326,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `GET /api/export/contacts` (session required), download button on settings, versioned JSON per technical-design §10.
 
 **Acceptance criteria:**
-- [ ] Export includes contacts, tags, notes, interactions, enrichment, userOverrides
-- [ ] Requires app session
-- [ ] Valid JSON; documents `version: 1`
+- [x] Export includes contacts, tags, notes, interactions, enrichment, userOverrides
+- [x] Requires app session
+- [x] Valid JSON; documents `version: 1`
 
 ---
 
@@ -336,7 +336,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Ready |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | <span style="color:#16a34a">T04</span>, <span style="color:#16a34a">T11</span> |
 | **User stories** | (infra — supports all sync stories) |
@@ -344,10 +344,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `POST /api/sync/trigger` with cron secret, in-process 6h scheduler, manual "Sync now" on settings, last sync timestamps + error surfacing.
 
 **Acceptance criteria:**
-- [ ] Cron endpoint syncs all connected accounts
-- [ ] Manual sync from settings works
-- [ ] Settings shows last sync time per account
-- [ ] Sync errors visible without data loss
+- [x] Cron endpoint syncs all connected accounts
+- [x] Manual sync from settings works
+- [x] Settings shows last sync time per account
+- [x] Sync errors visible without data loss
 
 ---
 
@@ -389,11 +389,11 @@ GitHub Issues: https://github.com/enw/e10d-crm/issues
 | T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Done | <span style="color:#16a34a">#8</span> |
 | T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Done | <span style="color:#16a34a">#9</span> |
 | T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Done | <span style="color:#16a34a">#4</span> |
-| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Ready | <span style="color:#16a34a">#11</span>, <span style="color:#16a34a">#8</span> |
-| T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Ready | <span style="color:#16a34a">#8</span> |
-| T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Backlog | #13 |
-| T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Ready | <span style="color:#16a34a">#9</span> |
-| T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Ready | <span style="color:#16a34a">#4</span>, <span style="color:#16a34a">#11</span> |
+| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Done | <span style="color:#16a34a">#11</span>, <span style="color:#16a34a">#8</span> |
+| T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Done | <span style="color:#16a34a">#8</span> |
+| T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Ready | <span style="color:#16a34a">#13</span> |
+| T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Done | <span style="color:#16a34a">#9</span> |
+| T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Done | <span style="color:#16a34a">#4</span>, <span style="color:#16a34a">#11</span> |
 
 ---
 

@@ -17,9 +17,12 @@ Greenfield — T01 scaffold in progress. See [docs/kanban.md](docs/kanban.md) an
 ## Verification
 
 ```sh
-npm run dev
-npm run lint
-npm run build
+pnpm install
+pnpm db:up          # Postgres on localhost:5433 (avoids macOS port 5432 conflict)
+pnpm db:migrate
+pnpm dev
+pnpm lint
+pnpm build
 docker compose up --build
 ```
 

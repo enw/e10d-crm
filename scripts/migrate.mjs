@@ -28,11 +28,40 @@ function loadEnvFile() {
   }
 }
 
+function describeDatabaseTarget(url) {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.username}@${parsed.hostname}:${parsed.port || "5432"}${parsed.pathname}`;
+  } catch {
+    return "(invalid DATABASE_URL)";
+  }
+}
+
+function printConnectionHelp(url, error) {
+  const target = describeDatabaseTarget(url);
+  console.error(`\nDatabase migration failed for ${target}`);
+  console.error(`Postgres error: ${error.message}\n`);
+
+  if (error.code === "28000") {
+    console.error(`The database user does not exist on the server you reached.
+
+Common causes on macOS:
+- Local Postgres is bound to localhost:5432 while Docker also maps Postgres
+- Fix: use the Docker Compose port from .env.example (127.0.0.1:5433)
+
+Try:
+  pnpm db:up
+  pnpm db:migrate
+
+Or update DATABASE_URL in .env to match your Postgres user/database.`);
+  }
+}
+
 loadEnvFile();
 
 const url = process.env.DATABASE_URL;
 if (!url) {
-  console.error("DATABASE_URL is required");
+  console.error("DATABASE_URL is required (set in .env or environment)");
   process.exit(1);
 }
 
@@ -47,6 +76,12 @@ const db = drizzle(client);
 try {
   await migrate(db, { migrationsFolder });
   console.log("Migrations complete");
+} catch (error) {
+  const cause = error instanceof Error && "cause" in error ? error.cause : error;
+  if (cause instanceof Error) {
+    printConnectionHelp(url, cause);
+  }
+  throw error;
 } finally {
   await client.end();
 }

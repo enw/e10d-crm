@@ -40,29 +40,39 @@ export const googleAuthOptions: NextAuthOptions = {
       const email = profile?.email;
       const googleSub = account.providerAccountId;
       if (!email || !googleSub || !account.access_token) {
+        console.error("Google signIn missing fields:", {
+          email: Boolean(email),
+          googleSub: Boolean(googleSub),
+          accessToken: Boolean(account.access_token),
+        });
         return false;
       }
 
-      const saved = await upsertGoogleAccount({
-        email,
-        googleSub,
-        accessToken: account.access_token,
-        refreshToken: account.refresh_token ?? null,
-        expiresAt: account.expires_at
-          ? new Date(account.expires_at * 1000)
-          : null,
-        scopes: account.scope?.split(" ").filter(Boolean) ?? [
-          ...GOOGLE_OAUTH_SCOPES,
-        ],
-      });
-
       try {
-        await syncContactsForAccount(saved.id);
-      } catch (error) {
-        console.error("Initial contact sync failed:", error);
-      }
+        const saved = await upsertGoogleAccount({
+          email,
+          googleSub,
+          accessToken: account.access_token,
+          refreshToken: account.refresh_token ?? null,
+          expiresAt: account.expires_at
+            ? new Date(account.expires_at * 1000)
+            : null,
+          scopes: account.scope?.split(" ").filter(Boolean) ?? [
+            ...GOOGLE_OAUTH_SCOPES,
+          ],
+        });
 
-      return true;
+        try {
+          await syncContactsForAccount(saved.id);
+        } catch (error) {
+          console.error("Initial contact sync failed:", error);
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Failed to save Google account:", error);
+        return false;
+      }
     },
     async redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl)) {

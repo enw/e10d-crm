@@ -3,6 +3,10 @@ import Link from "next/link";
 import { ConnectGoogleButton } from "@/components/connect-google-button";
 import { DisconnectGoogleAccountButton } from "@/components/disconnect-google-button";
 import { LogoutButton } from "@/components/logout-button";
+import {
+  googleOAuthErrorMessage,
+  isGooglePlaygroundClientId,
+} from "@/lib/auth/google-oauth-errors";
 import { listGoogleAccounts } from "@/lib/google/accounts";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +18,11 @@ type SettingsPageProps = {
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const params = await searchParams;
   const accounts = await listGoogleAccounts();
+  const oauthError = googleOAuthErrorMessage(params.error);
+  const usingPlaygroundClient = isGooglePlaygroundClientId(
+    process.env.GOOGLE_CLIENT_ID,
+  );
+  const callbackUri = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/auth/callback/google`;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8">
@@ -40,10 +49,18 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </p>
       ) : null}
 
-      {params.error ? (
+      {oauthError ? (
         <p className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          Google sign-in failed. Check OAuth credentials and redirect URI in
-          Google Cloud Console.
+          {oauthError}
+        </p>
+      ) : null}
+
+      {usingPlaygroundClient ? (
+        <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          GOOGLE_CLIENT_ID is the public OAuth Playground client — it will not
+          work for this app. Create your own OAuth client in Google Cloud Console
+          and set redirect URI to{" "}
+          <code className="rounded bg-amber-100 px-1">{callbackUri}</code>
         </p>
       ) : null}
 

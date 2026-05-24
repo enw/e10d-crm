@@ -33,6 +33,9 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
           </p>
         </div>
         <nav className="flex items-center gap-3 text-sm">
+          <Link href="/calendar" className="text-zinc-600 hover:text-zinc-900">
+            Calendar
+          </Link>
           <Link href="/settings" className="text-zinc-600 hover:text-zinc-900">
             Settings
           </Link>

@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { interactions } from "@/db/schema";
+import { contacts, interactions } from "@/db/schema";
 
 export async function logInteraction(input: {
   contactId: string;
@@ -16,6 +16,28 @@ export async function logInteraction(input: {
     content: input.content,
     metadata: input.metadata,
   });
+}
+
+export async function addNote(contactId: string, content: string) {
+  const trimmed = content.trim();
+  if (!trimmed) {
+    throw new Error("Note content is required");
+  }
+
+  const db = getDb();
+  const now = new Date();
+
+  await db.insert(interactions).values({
+    contactId,
+    type: "note",
+    content: trimmed,
+    occurredAt: now,
+  });
+
+  await db
+    .update(contacts)
+    .set({ lastInteractionAt: now, updatedAt: now })
+    .where(eq(contacts.id, contactId));
 }
 
 export async function listInteractionsForContact(contactId: string, limit = 20) {

@@ -7,12 +7,12 @@ import {
   contacts,
   googleAccounts,
   googleContactLinks,
+  interactions,
   tags,
 } from "@/db/schema";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import {
   findContactIdByEmail,
-  mergeContactFields,
   parseGooglePerson,
   pickPrimaryEmail,
 } from "@/lib/sync/contact-merge";
@@ -116,7 +116,10 @@ async function upsertSyncedContact(
       .limit(1);
 
     if (existing) {
-      const merged = mergeContactFields(existing, person);
+      const { applyUserOverridesToSyncMerge } = await import(
+        "@/lib/sync/user-overrides"
+      );
+      const merged = applyUserOverridesToSyncMerge(existing, person);
       await db
         .update(contacts)
         .set({ ...merged, updatedAt: now })
@@ -200,6 +203,12 @@ function buildSearchWhere(q: string, tagContactIds: string[] | null) {
             SELECT 1 FROM jsonb_array_elements_text(${contacts.emails}) AS email
             WHERE email ILIKE ${pattern}
           )
+          OR EXISTS (
+            SELECT 1 FROM ${interactions} AS note
+            WHERE note.contact_id = ${contacts.id}
+              AND note.type = 'note'
+              AND note.content ILIKE ${pattern}
+          )
         )`,
       );
     } else {
@@ -209,6 +218,12 @@ function buildSearchWhere(q: string, tagContactIds: string[] | null) {
           OR EXISTS (
             SELECT 1 FROM jsonb_array_elements_text(${contacts.emails}) AS email
             WHERE email ILIKE ${pattern}
+          )
+          OR EXISTS (
+            SELECT 1 FROM ${interactions} AS note
+            WHERE note.contact_id = ${contacts.id}
+              AND note.type = 'note'
+              AND note.content ILIKE ${pattern}
           )
         )`,
       );

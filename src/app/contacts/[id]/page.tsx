@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ContactNoteForm } from "@/components/contact-note-form";
 import { ContactTagManager } from "@/components/contact-tag-manager";
+import { InteractionTimeline } from "@/components/interaction-timeline";
 import { LogoutButton } from "@/components/logout-button";
+import { listInteractionsForContact } from "@/lib/interactions";
 import { getContactById } from "@/lib/sync/contacts";
 import { listTagsForContact } from "@/lib/tags";
 
@@ -37,7 +40,10 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
     notFound();
   }
 
-  const tags = await listTagsForContact(id);
+  const [tags, interactions] = await Promise.all([
+    listTagsForContact(id),
+    listInteractionsForContact(id),
+  ]);
   const title = contact.displayName || contact.emails[0] || "Unknown contact";
 
   return (
@@ -58,8 +64,19 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
               {[contact.title, contact.company].filter(Boolean).join(" · ")}
             </p>
           ) : null}
+          {contact.lastInteractionAt ? (
+            <p className="mt-1 text-xs text-zinc-500">
+              Last interaction {contact.lastInteractionAt.toLocaleString()}
+            </p>
+          ) : null}
         </div>
         <nav className="flex items-center gap-3 text-sm">
+          <Link
+            href={`/contacts/${contact.id}/edit`}
+            className="text-zinc-600 hover:text-zinc-900"
+          >
+            Edit
+          </Link>
           <Link href="/settings" className="text-zinc-600 hover:text-zinc-900">
             Settings
           </Link>
@@ -81,6 +98,20 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
           <h2 className="text-sm font-medium text-zinc-500">Tags</h2>
           <div className="mt-2">
             <ContactTagManager contactId={contact.id} tags={tags} />
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-sm font-medium text-zinc-500">Notes</h2>
+          <div className="mt-2">
+            <ContactNoteForm contactId={contact.id} />
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-sm font-medium text-zinc-500">Timeline</h2>
+          <div className="mt-3">
+            <InteractionTimeline interactions={interactions} />
           </div>
         </div>
 

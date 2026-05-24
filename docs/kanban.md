@@ -201,7 +201,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T08 |
 | **User stories** | US-9, US-14 (partial), US-6 (notes search) |
@@ -209,10 +209,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `interactions` table, add note form on dossier, reverse-chronological timeline (notes, tag changes), update `last_interaction_at`, extend search to note content.
 
 **Acceptance criteria:**
-- [ ] Add timestamped note on dossier
-- [ ] Timeline shows notes + tag_added/tag_removed
-- [ ] Search finds contacts by note content
-- [ ] `last_interaction_at` updates on note
+- [x] Add timestamped note on dossier
+- [x] Timeline shows notes + tag_added/tag_removed
+- [x] Search finds contacts by note content
+- [x] `last_interaction_at` updates on note
 
 ---
 
@@ -220,7 +220,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T09 |
 | **User stories** | US-8 (edit path) |
@@ -228,10 +228,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `/contacts/[id]/edit`, `user_overrides` jsonb, edit sets override flags, re-sync skips overridden fields.
 
 **Acceptance criteria:**
-- [ ] User can edit display name, company, title, etc.
-- [ ] Edited fields survive Google re-sync
-- [ ] Non-overridden fields still update from sync
-- [ ] Unit tests for override merge logic
+- [x] User can edit display name, company, title, etc.
+- [x] Edited fields survive Google re-sync
+- [x] Non-overridden fields still update from sync
+- [x] Unit tests for override merge logic
 
 ---
 
@@ -239,7 +239,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T04 |
 | **User stories** | US-12 |
@@ -247,9 +247,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** Calendar sync engine (30d past / 90d future), `calendar_events` table, `/calendar` page listing upcoming events.
 
 **Acceptance criteria:**
-- [ ] Events sync on account connect + manual/cron trigger
-- [ ] `/calendar` shows events sorted by start time
-- [ ] Upsert by `(google_account_id, google_event_id)`
+- [x] Events sync on account connect + manual/cron trigger
+- [x] `/calendar` shows events sorted by start time
+- [x] Upsert by `(google_account_id, google_event_id)`
 
 ---
 
@@ -379,10 +379,10 @@ GitHub Issues: https://github.com/enw/e10d-crm/issues
 | T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Done | #5 |
 | T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Done | #6 |
 | T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Done | #7 |
-| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Ready | #8 |
-| T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Backlog | #9 |
-| T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Backlog | #4 |
-| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Backlog | #11, #8 |
+| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Done | #8 |
+| T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Done | #9 |
+| T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Done | #4 |
+| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Ready | #11, #8 |
 | T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Backlog | #8 |
 | T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Backlog | #13 |
 | T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Backlog | #9 |

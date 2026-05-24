@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ConnectGoogleButton } from "@/components/connect-google-button";
 import { DisconnectGoogleAccountButton } from "@/components/disconnect-google-button";
 import { LogoutButton } from "@/components/logout-button";
+import { SyncNowButton } from "@/components/sync-now-button";
 import {
   googleOAuthErrorMessage,
   isGooglePlaygroundClientId,
@@ -39,13 +40,16 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           <Link href="/contacts" className="text-zinc-600 hover:text-zinc-900">
             Contacts
           </Link>
+          <Link href="/calendar" className="text-zinc-600 hover:text-zinc-900">
+            Calendar
+          </Link>
           <LogoutButton />
         </nav>
       </header>
 
       {params.connected === "google" ? (
         <p className="mt-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-          Google account connected. Initial contact sync has started.
+          Google account connected. Initial contact and calendar sync has started.
         </p>
       ) : null}
 
@@ -63,6 +67,16 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           <code className="rounded bg-amber-100 px-1">{callbackUri}</code>
         </p>
       ) : null}
+
+      <section className="mt-8 space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-medium text-zinc-900">Sync</h2>
+          <SyncNowButton />
+        </div>
+        <p className="text-sm text-zinc-500">
+          Re-sync contacts and calendar events for all connected Google accounts.
+        </p>
+      </section>
 
       <section className="mt-8 space-y-4">
         <div className="flex items-center justify-between gap-4">

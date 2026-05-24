@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { upsertGoogleAccount } from "@/lib/google/accounts";
 import { syncContactsForAccount } from "@/lib/sync/contacts";
+import { syncCalendarForAccount } from "@/lib/sync/calendar";
 
 export const GOOGLE_OAUTH_SCOPES = [
   "openid",
@@ -66,6 +67,12 @@ export const googleAuthOptions: NextAuthOptions = {
           await syncContactsForAccount(saved.id);
         } catch (error) {
           console.error("Initial contact sync failed:", error);
+        }
+
+        try {
+          await syncCalendarForAccount(saved.id);
+        } catch (error) {
+          console.error("Initial calendar sync failed:", error);
         }
 
         return true;

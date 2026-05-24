@@ -367,24 +367,26 @@ T03 (disconnect) can slot in after T02 for early cleanup testing; defer if focus
 
 ## Board snapshot
 
-| ID | Title | Status | Blocked by |
-|---|---|---|---|
-| T01 | App shell + password login | Ready | — |
-| T02 | Connect a Google account | Backlog | T01 |
-| T03 | Disconnect a Google account | Backlog | T02 |
-| T04 | Sync contacts from Google | Backlog | T02 |
-| T05 | Multi-account dedup by email | Backlog | T04 |
-| T06 | Contact search | Backlog | T05 |
-| T07 | Tags: create, assign, filter | Backlog | T06 |
-| T08 | Contact dossier page | Backlog | T07 |
-| T09 | Notes + interaction timeline | Backlog | T08 |
-| T10 | Edit contact + user_overrides | Backlog | T09 |
-| T11 | Calendar sync + events list | Backlog | T04 |
-| T12 | Link calendar events to contacts | Backlog | T11, T08 |
-| T13 | Enrichment + LeadPure (single) | Backlog | T08 |
-| T14 | Batch enrichment with retry | Backlog | T13 |
-| T15 | JSON export | Backlog | T09 |
-| T16 | Background sync + status | Backlog | T04, T11 |
+GitHub Issues: https://github.com/enw/e10d-crm/issues
+
+| ID | GitHub | Title | Status | Blocked by |
+|---|---|---|---|---|
+| T01 | [#1](https://github.com/enw/e10d-crm/issues/1) | App shell + password login | Ready | — |
+| T02 | [#2](https://github.com/enw/e10d-crm/issues/2) | Connect a Google account | Backlog | #1 |
+| T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Backlog | #2 |
+| T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Backlog | #2 |
+| T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Backlog | #4 |
+| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Backlog | #5 |
+| T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Backlog | #6 |
+| T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Backlog | #7 |
+| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Backlog | #8 |
+| T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Backlog | #9 |
+| T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Backlog | #4 |
+| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Backlog | #11, #8 |
+| T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Backlog | #8 |
+| T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Backlog | #13 |
+| T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Backlog | #9 |
+| T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Backlog | #4, #11 |
 
 ---
 
@@ -398,16 +400,10 @@ T03 (disconnect) can slot in after T02 for early cleanup testing; defer if focus
 | Dependency / blocked-by | ✅ | ✅ |
 | HITL vs AFK classification | ✅ | ✅ (T02 = HITL) |
 | Quiz user before publishing | ✅ | Skipped — you asked for full breakdown |
-| Publish to GitHub Issues | ✅ | Not done (no remote yet) |
-| Kanban column tracking | ❌ | ✅ in this file |
+| Publish to GitHub Issues | ✅ | ✅ [#1–#16](https://github.com/enw/e10d-crm/issues) |
+| Kanban column tracking | ❌ | ✅ in this file + GitHub labels |
 
-`to-issues` references `/setup-matt-pocock-skills` for issue-tracker integration (labels, triage flow). That setup is **not configured** for this repo yet — no GitHub remote, no labels.
-
-**Alternatives:**
-- **`gh-create-issue`** — publish these tickets once repo is on GitHub
-- **`project-tracker`** — local JSON kanban in `.projects/e10d-crm/` with `todo | in_progress | done | blocked` statuses
-
-**Recommended flow:** Keep this file as source of truth → move Status column as you work → when GitHub remote exists, run `to-issues` publish pass or `gh issue create` batch from these templates.
+**Workflow:** Triage on GitHub (`needs-triage` → `ready` → `in-progress` → `done`). Update this file's Status column when closing issues. Issue #1 is labeled `ready` — start there.
 
 ---
 

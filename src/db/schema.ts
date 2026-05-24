@@ -1,6 +1,8 @@
 import {
   jsonb,
+  pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -43,7 +45,10 @@ export const contacts = pgTable("contacts", {
   title: text("title"),
   location: text("location"),
   enrichmentBlob: jsonb("enrichment_blob"),
-  userOverrides: jsonb("user_overrides").$type<Record<string, boolean>>().notNull().default({}),
+  userOverrides: jsonb("user_overrides")
+    .$type<Record<string, boolean>>()
+    .notNull()
+    .default({}),
   lastInteractionAt: timestamp("last_interaction_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
@@ -113,7 +118,52 @@ export const calendarEvents = pgTable(
   ],
 );
 
+export const tags = pgTable("tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const contactTags = pgTable(
+  "contact_tags",
+  {
+    contactId: uuid("contact_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    tagId: uuid("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+  },
+  (table) => [primaryKey({ columns: [table.contactId, table.tagId] })],
+);
+
+export const interactionType = pgEnum("interaction_type", [
+  "note",
+  "meeting",
+  "enrichment",
+  "tag_added",
+  "tag_removed",
+  "sync",
+]);
+
+export const interactions = pgTable("interactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  contactId: uuid("contact_id")
+    .notNull()
+    .references(() => contacts.id, { onDelete: "cascade" }),
+  type: interactionType("type").notNull(),
+  content: text("content"),
+  metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+  occurredAt: timestamp("occurred_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export type SchemaMeta = typeof schemaMeta.$inferSelect;
 export type GoogleAccount = typeof googleAccounts.$inferSelect;
 export type Contact = typeof contacts.$inferSelect;
 export type GoogleContactLink = typeof googleContactLinks.$inferSelect;
+export type Tag = typeof tags.$inferSelect;
+export type Interaction = typeof interactions.$inferSelect;

@@ -146,7 +146,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T05 |
 | **User stories** | US-6 (name, email only — tags/notes in T09) |
@@ -154,9 +154,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** Search input on `/contacts`; filter by display name (trigram) and email substring.
 
 **Acceptance criteria:**
-- [ ] Search by name returns matching contacts
-- [ ] Search by email returns matching contacts
-- [ ] Empty search shows full list
+- [x] Search by name returns matching contacts
+- [x] Search by email returns matching contacts
+- [x] Empty search shows full list
 
 ---
 
@@ -164,7 +164,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T06 |
 | **User stories** | US-7 |
@@ -172,10 +172,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `tags` + `contact_tags` tables, tag picker on contact edit, tags column on list, filter by tag on `/contacts`.
 
 **Acceptance criteria:**
-- [ ] Create freeform tag and assign to contact
-- [ ] Tag visible on contact list
-- [ ] Filter list by tag
-- [ ] Tag assign logs `tag_added` interaction
+- [x] Create freeform tag and assign to contact
+- [x] Tag visible on contact list
+- [x] Filter list by tag
+- [x] Tag assign logs `tag_added` interaction
 
 ---
 
@@ -183,7 +183,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | T07 |
 | **User stories** | US-8 (partial) |
@@ -191,9 +191,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** `/contacts/[id]` dossier: display name, emails, phones, company, title, tags, enrichment summary placeholder.
 
 **Acceptance criteria:**
-- [ ] Click contact from list opens dossier
-- [ ] All synced fields + tags rendered
-- [ ] 404 for unknown id
+- [x] Click contact from list opens dossier
+- [x] All synced fields + tags rendered
+- [x] 404 for unknown id
 
 ---
 
@@ -376,10 +376,10 @@ GitHub Issues: https://github.com/enw/e10d-crm/issues
 | T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Done | #2 |
 | T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Done | #2 |
 | T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Done | #4 |
-| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Ready | #5 |
-| T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Backlog | #6 |
-| T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Backlog | #7 |
-| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Backlog | #8 |
+| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Done | #5 |
+| T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Done | #6 |
+| T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Done | #7 |
+| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Ready | #8 |
 | T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Backlog | #9 |
 | T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Backlog | #4 |
 | T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Backlog | #11, #8 |

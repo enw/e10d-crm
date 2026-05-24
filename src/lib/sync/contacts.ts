@@ -1,11 +1,13 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { google } from "googleapis";
 
 import { getDb } from "@/db";
 import {
+  contactTags,
   contacts,
   googleAccounts,
   googleContactLinks,
+  tags,
 } from "@/db/schema";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import {
@@ -14,6 +16,7 @@ import {
   parseGooglePerson,
   pickPrimaryEmail,
 } from "@/lib/sync/contact-merge";
+import { TRIGRAM_MIN_LENGTH } from "@/lib/sync/contact-search";
 
 const PERSON_FIELDS =
   "names,emailAddresses,phoneNumbers,organizations,metadata";
@@ -143,9 +146,106 @@ async function upsertSyncedContact(
     });
 }
 
-export async function listContacts() {
+export type ContactListItem = {
+  id: string;
+  displayName: string;
+  emails: string[];
+  company: string | null;
+  tags: { id: string; name: string }[];
+};
+
+export type ContactSearchOptions = {
+  q?: string;
+  tagId?: string;
+};
+
+async function loadTagsForContacts(contactIds: string[]) {
+  if (contactIds.length === 0) {
+    return new Map<string, { id: string; name: string }[]>();
+  }
+
   const db = getDb();
-  return db
+  const rows = await db
+    .select({
+      contactId: contactTags.contactId,
+      id: tags.id,
+      name: tags.name,
+    })
+    .from(contactTags)
+    .innerJoin(tags, eq(contactTags.tagId, tags.id))
+    .where(inArray(contactTags.contactId, contactIds))
+    .orderBy(tags.name);
+
+  const byContact = new Map<string, { id: string; name: string }[]>();
+  for (const row of rows) {
+    const existing = byContact.get(row.contactId) ?? [];
+    existing.push({ id: row.id, name: row.name });
+    byContact.set(row.contactId, existing);
+  }
+  return byContact;
+}
+
+function buildSearchWhere(q: string, tagContactIds: string[] | null) {
+  const conditions = [];
+
+  const trimmed = q.trim();
+  if (trimmed) {
+    const pattern = `%${trimmed}%`;
+    if (trimmed.length >= TRIGRAM_MIN_LENGTH) {
+      conditions.push(
+        sql`(
+          ${contacts.displayName} % ${trimmed}
+          OR ${contacts.displayName} ILIKE ${pattern}
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements_text(${contacts.emails}) AS email
+            WHERE email ILIKE ${pattern}
+          )
+        )`,
+      );
+    } else {
+      conditions.push(
+        sql`(
+          ${contacts.displayName} ILIKE ${pattern}
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements_text(${contacts.emails}) AS email
+            WHERE email ILIKE ${pattern}
+          )
+        )`,
+      );
+    }
+  }
+
+  if (tagContactIds) {
+    if (tagContactIds.length === 0) {
+      return sql`false`;
+    }
+    conditions.push(inArray(contacts.id, tagContactIds));
+  }
+
+  if (conditions.length === 0) {
+    return undefined;
+  }
+
+  return and(...conditions);
+}
+
+export async function searchContacts(
+  options: ContactSearchOptions = {},
+): Promise<ContactListItem[]> {
+  const db = getDb();
+  const q = options.q?.trim() ?? "";
+  const tagId = options.tagId?.trim() ?? "";
+
+  let tagContactIds: string[] | null = null;
+  if (tagId) {
+    const rows = await db
+      .select({ contactId: contactTags.contactId })
+      .from(contactTags)
+      .where(eq(contactTags.tagId, tagId));
+    tagContactIds = rows.map((row) => row.contactId);
+  }
+
+  const rows = await db
     .select({
       id: contacts.id,
       displayName: contacts.displayName,
@@ -153,5 +253,27 @@ export async function listContacts() {
       company: contacts.company,
     })
     .from(contacts)
+    .where(buildSearchWhere(q, tagContactIds))
     .orderBy(contacts.displayName);
+
+  const tagsByContact = await loadTagsForContacts(rows.map((row) => row.id));
+
+  return rows.map((row) => ({
+    ...row,
+    tags: tagsByContact.get(row.id) ?? [],
+  }));
+}
+
+export async function getContactById(id: string) {
+  const db = getDb();
+  const [contact] = await db
+    .select()
+    .from(contacts)
+    .where(eq(contacts.id, id))
+    .limit(1);
+  return contact ?? null;
+}
+
+export async function listContacts() {
+  return searchContacts();
 }

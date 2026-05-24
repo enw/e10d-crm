@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ConnectGoogleButton } from "@/components/connect-google-button";
+import { DisconnectGoogleAccountButton } from "@/components/disconnect-google-button";
 import { LogoutButton } from "@/components/logout-button";
 import { listGoogleAccounts } from "@/lib/google/accounts";
 
@@ -35,7 +36,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
       {params.connected === "google" ? (
         <p className="mt-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-          Google account connected. Contact sync arrives in T04.
+          Google account connected. Initial contact sync has started.
         </p>
       ) : null}
 
@@ -69,9 +70,10 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                     Connected {account.connectedAt.toLocaleString()}
                   </p>
                 </div>
-                <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-800">
-                  Connected
-                </span>
+                <DisconnectGoogleAccountButton
+                  accountId={account.id}
+                  email={account.email}
+                />
               </li>
             ))}
           </ul>

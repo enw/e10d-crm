@@ -4,7 +4,7 @@ Next.js CRM with OAuth login, Google Contacts + Google Calendar sync.
 
 ## State
 
-Greenfield — T01 scaffold in progress. See [docs/kanban.md](docs/kanban.md) and GitHub Issues.
+Greenfield — through T05. See [docs/kanban.md](docs/kanban.md) and GitHub Issues.
 
 ## Key architecture
 
@@ -21,7 +21,7 @@ pnpm install
 pnpm db:up          # Postgres on localhost:5433 (avoids macOS port 5432 conflict)
 pnpm db:migrate
 pnpm dev
-pnpm lint
+pnpm test
 pnpm build
 docker compose up --build
 ```

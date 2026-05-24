@@ -373,10 +373,10 @@ GitHub Issues: https://github.com/enw/e10d-crm/issues
 |---|---|---|---|---|
 | T01 | [#1](https://github.com/enw/e10d-crm/issues/1) | App shell + password login | Done | — |
 | T02 | [#2](https://github.com/enw/e10d-crm/issues/2) | Connect a Google account | Done | #1 |
-| T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Ready | #2 |
-| T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Backlog | #2 |
-| T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Backlog | #4 |
-| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Backlog | #5 |
+| T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Done | #2 |
+| T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Done | #2 |
+| T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Done | #4 |
+| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Ready | #5 |
 | T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Backlog | #6 |
 | T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Backlog | #7 |
 | T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Backlog | #8 |

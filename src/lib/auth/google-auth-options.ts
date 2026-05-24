@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { upsertGoogleAccount } from "@/lib/google/accounts";
+import { syncContactsForAccount } from "@/lib/sync/contacts";
 
 export const GOOGLE_OAUTH_SCOPES = [
   "openid",
@@ -42,7 +43,7 @@ export const googleAuthOptions: NextAuthOptions = {
         return false;
       }
 
-      await upsertGoogleAccount({
+      const saved = await upsertGoogleAccount({
         email,
         googleSub,
         accessToken: account.access_token,
@@ -54,6 +55,12 @@ export const googleAuthOptions: NextAuthOptions = {
           ...GOOGLE_OAUTH_SCOPES,
         ],
       });
+
+      try {
+        await syncContactsForAccount(saved.id);
+      } catch (error) {
+        console.error("Initial contact sync failed:", error);
+      }
 
       return true;
     },

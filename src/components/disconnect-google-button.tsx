@@ -26,7 +26,7 @@ export function DisconnectGoogleAccountButton({
 
         startTransition(async () => {
           const { disconnectGoogleAccountAction } = await import(
-            "@/app/settings/actions"
+            "@/app/(app)/settings/actions"
           );
           await disconnectGoogleAccountAction(accountId);
         });

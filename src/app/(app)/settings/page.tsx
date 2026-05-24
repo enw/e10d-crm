@@ -1,9 +1,6 @@
-import Link from "next/link";
-
 import { ConnectGoogleButton } from "@/components/connect-google-button";
 import { BatchEnrichButton } from "@/components/batch-enrich-button";
 import { DisconnectGoogleAccountButton } from "@/components/disconnect-google-button";
-import { LogoutButton } from "@/components/logout-button";
 import { SyncNowButton } from "@/components/sync-now-button";
 import {
   googleOAuthErrorMessage,
@@ -29,29 +26,16 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const callbackUri = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/auth/callback/google`;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8">
-      <header className="flex items-center justify-between gap-4 border-b border-zinc-200 pb-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            Settings
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Connect Google accounts for contacts and calendar sync.
-          </p>
-        </div>
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/contacts" className="text-zinc-600 hover:text-zinc-900">
-            Contacts
-          </Link>
-          <Link href="/calendar" className="text-zinc-600 hover:text-zinc-900">
-            Calendar
-          </Link>
-          <LogoutButton />
-        </nav>
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 md:px-6">
+      <header className="border-b border-border pb-4">
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Connect Google accounts for contacts and calendar sync.
+        </p>
       </header>
 
       {params.connected === "google" ? (
-        <p className="mt-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+        <p className="mt-6 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400">
           Google account connected. Initial contact and calendar sync has started.
         </p>
       ) : null}

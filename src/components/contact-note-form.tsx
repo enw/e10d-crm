@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-import { addNoteAction } from "@/app/contacts/actions";
+import { addNoteAction } from "@/app/(app)/contacts/actions";
 
 export function ContactNoteForm({ contactId }: { contactId: string }) {
   const router = useRouter();

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { syncNowAction } from "@/app/settings/actions";
+import { syncNowAction } from "@/app/(app)/settings/actions";
 
 export function SyncNowButton() {
   const router = useRouter();

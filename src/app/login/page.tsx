@@ -3,6 +3,10 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,7 +32,7 @@ function LoginForm() {
         return;
       }
 
-      const from = searchParams.get("from") || "/contacts";
+      const from = searchParams.get("from") || "/calendar";
       router.push(from);
       router.refresh();
     } catch {
@@ -40,21 +44,14 @@ function LoginForm() {
 
   return (
     <main className="flex flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
-          e10d CRM
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">Homelab sign-in</p>
+      <div className="w-full max-w-sm rounded-xl border border-border bg-card p-8 shadow-sm">
+        <h1 className="text-xl font-semibold tracking-tight">e10d CRM</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Homelab sign-in</p>
 
         <form className="mt-6 space-y-4" onSubmit={onSubmit}>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-zinc-700"
-            >
-              Password
-            </label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
               id="password"
               name="password"
               type="password"
@@ -62,23 +59,19 @@ function LoginForm() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="mt-1"
             />
           </div>
 
           {error ? (
-            <p className="text-sm text-red-600" role="alert">
+            <p className="text-sm text-destructive" role="alert">
               {error}
             </p>
           ) : null}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Signing in…" : "Sign in"}
-          </button>
+          </Button>
         </form>
       </div>
     </main>
@@ -89,7 +82,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex flex-1 items-center justify-center text-sm text-zinc-500">
+        <main className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
           Loading…
         </main>
       }

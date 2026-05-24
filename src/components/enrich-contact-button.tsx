@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { enrichContactAction } from "@/app/contacts/actions";
+import { enrichContactAction } from "@/app/(app)/contacts/actions";
 
 export function EnrichContactButton({ contactId }: { contactId: string }) {
   const router = useRouter();

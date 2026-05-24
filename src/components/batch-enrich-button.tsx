@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { batchEnrichAction } from "@/app/settings/actions";
+import { batchEnrichAction } from "@/app/(app)/settings/actions";
 
 export function BatchEnrichButton({ pendingCount }: { pendingCount: number }) {
   const router = useRouter();

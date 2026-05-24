@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-import { assignTagAction, removeTagAction } from "@/app/contacts/actions";
+import { assignTagAction, removeTagAction } from "@/app/(app)/contacts/actions";
 
 type Tag = {
   id: string;

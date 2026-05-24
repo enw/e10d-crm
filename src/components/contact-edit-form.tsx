@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-import { updateContactAction } from "@/app/contacts/actions";
+import { updateContactAction } from "@/app/(app)/contacts/actions";
 import type { Contact } from "@/db/schema";
 
 function joinList(values: string[]) {

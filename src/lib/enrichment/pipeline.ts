@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { contacts, enrichmentRuns } from "@/db/schema";
 import { enrichWithLeadPure } from "@/lib/enrichment/leadpure";
 import type { EnrichmentResult } from "@/lib/enrichment/types";
+import { withExponentialRetry } from "@/lib/enrichment/retry";
 import { logInteraction } from "@/lib/interactions";
 import { pickPrimaryEmail } from "@/lib/sync/contact-merge";
 import type { UserOverrides } from "@/lib/sync/user-overrides";
@@ -42,7 +43,14 @@ export function mergeEnrichmentIntoContact(
   };
 }
 
-export async function enrichContact(contactId: string, source = "leadpure") {
+export async function enrichContact(
+  contactId: string,
+  source = "leadpure",
+  options?: {
+    enrichFn?: (email: string) => Promise<EnrichmentResult>;
+    useRetry?: boolean;
+  },
+) {
   const db = getDb();
   const [contact] = await db
     .select()
@@ -69,7 +77,12 @@ export async function enrichContact(contactId: string, source = "leadpure") {
     .returning();
 
   try {
-    const result = await enrichWithLeadPure(email);
+    const enrichFn = options?.enrichFn ?? enrichWithLeadPure;
+    const useRetry = options?.useRetry ?? true;
+    const callEnricher = () => enrichFn(email);
+    const result = useRetry
+      ? await withExponentialRetry(callEnricher)
+      : await callEnricher();
 
     const merged = mergeEnrichmentIntoContact(
       {

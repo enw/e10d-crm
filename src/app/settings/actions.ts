@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { disconnectGoogleAccount } from "@/lib/google/accounts";
+import { batchEnrichPendingContacts } from "@/lib/enrichment/batch";
 import { syncAllGoogleAccounts } from "@/lib/sync/runner";
 
 export async function disconnectGoogleAccountAction(accountId: string) {
@@ -17,5 +18,17 @@ export async function syncNowAction() {
   revalidatePath("/settings");
   revalidatePath("/contacts");
   revalidatePath("/calendar");
+  return result;
+}
+
+export async function batchEnrichAction() {
+  const result = await batchEnrichPendingContacts();
+  revalidatePath("/settings");
+  revalidatePath("/contacts");
+  for (const item of result.results) {
+    if (item.status === "success") {
+      revalidatePath(`/contacts/${item.contactId}`);
+    }
+  }
   return result;
 }

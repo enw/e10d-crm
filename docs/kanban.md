@@ -38,7 +38,7 @@ flowchart LR
   T04:::done --> T11:::done
   T11:::done --> T12:::done
   T08:::done --> T13:::done
-  T13:::done --> T14:::open
+  T13:::done --> T14:::done
   T09:::done --> T15:::done
   T04:::done --> T16:::done
   T11:::done --> T16:::done
@@ -299,7 +299,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Ready |
+| **Status** | Done |
 | **Type** | AFK |
 | **Blocked by** | <span style="color:#16a34a">T13</span> |
 | **User stories** | US-11 |
@@ -307,10 +307,10 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 **What to build:** Batch enrich action (settings or dossier list select), chunked processing, exponential backoff (1s → 60s, 5 retries), per-contact status in `enrichment_runs`.
 
 **Acceptance criteria:**
-- [ ] Batch of N contacts processes sequentially/in chunks
-- [ ] Transient failures retry with backoff
-- [ ] Failed contacts marked failed; successes not re-queued
-- [ ] Retry behavior covered by unit tests
+- [x] Batch of N contacts processes sequentially/in chunks
+- [x] Transient failures retry with backoff
+- [x] Failed contacts marked failed; successes not re-queued
+- [x] Retry behavior covered by unit tests
 
 ---
 
@@ -391,7 +391,7 @@ GitHub Issues: https://github.com/enw/e10d-crm/issues
 | T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Done | <span style="color:#16a34a">#4</span> |
 | T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Done | <span style="color:#16a34a">#11</span>, <span style="color:#16a34a">#8</span> |
 | T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Done | <span style="color:#16a34a">#8</span> |
-| T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Ready | <span style="color:#16a34a">#13</span> |
+| T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Done | <span style="color:#16a34a">#13</span> |
 | T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Done | <span style="color:#16a34a">#9</span> |
 | T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Done | <span style="color:#16a34a">#4</span>, <span style="color:#16a34a">#11</span> |
 

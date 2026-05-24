@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Source_Serif_4 } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sourceSerif = Source_Serif_4({
+  variable: "--font-serif",
   subsets: ["latin"],
 });
 
@@ -30,13 +30,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sourceSerif.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col overflow-x-clip">
+        <div aria-hidden="true" className="page-backdrop" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -44,7 +45,7 @@ export default function RootLayout({
           storageKey="e10d-theme"
           disableTransitionOnChange
         >
-          {children}
+          <div className="app-layer flex min-h-full flex-1 flex-col">{children}</div>
         </ThemeProvider>
       </body>
     </html>

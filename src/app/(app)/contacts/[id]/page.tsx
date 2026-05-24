@@ -88,7 +88,7 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
         </Link>
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+            <h1 className="text-2xl leading-tight sm:text-3xl">{title}</h1>
             {contact.company || contact.title ? (
               <p className="mt-1 text-sm text-muted-foreground">
                 {[contact.title, contact.company].filter(Boolean).join(" · ")}

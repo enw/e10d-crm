@@ -28,7 +28,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 md:px-6">
       <header className="border-b border-border pb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <h1 className="text-2xl leading-tight sm:text-3xl">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Connect Google accounts for contacts and calendar sync.
         </p>

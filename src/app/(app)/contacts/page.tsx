@@ -41,7 +41,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 md:px-6">
       <header className="border-b border-border pb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Contacts</h1>
+        <h1 className="text-2xl leading-tight sm:text-3xl">Contacts</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {contacts.length} contact{contacts.length === 1 ? "" : "s"}
           {q.trim() || tag ? " matching filters" : " synced from Google"}
@@ -73,7 +73,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
           )}
         </section>
       ) : (
-        <ul className="mt-8 divide-y divide-border rounded-xl border border-border bg-card">
+        <ul className="mt-8 divide-y divide-border rounded-sm border border-border bg-card">
           {contacts.map((contact) => {
             const nextMeeting = nextMeetings.get(contact.id);
             return (

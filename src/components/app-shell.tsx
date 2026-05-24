@@ -19,29 +19,25 @@ function NavLink({
   href,
   label,
   icon: Icon,
-  className,
 }: {
   href: string;
   label: string;
   icon: typeof Calendar;
-  className?: string;
 }) {
   const pathname = usePathname();
-  const active =
-    pathname === href || pathname.startsWith(`${href}/`);
+  const active = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        "inline-flex min-h-9 items-center gap-2 rounded-sm px-3 py-2 text-sm no-underline transition-colors",
         active
-          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
-        className,
+          ? "text-foreground underline decoration-accent/50 underline-offset-4"
+          : "text-muted-foreground hover:text-foreground",
       )}
     >
-      <Icon className="size-4 shrink-0" />
+      <Icon className="size-4 shrink-0 opacity-70" />
       <span>{label}</span>
     </Link>
   );
@@ -52,28 +48,37 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-full flex-col md:flex-row">
-      <aside className="hidden w-56 shrink-0 border-r border-sidebar-border bg-sidebar md:flex md:flex-col">
-        <div className="border-b border-sidebar-border px-4 py-5">
-          <Link href="/contacts" className="text-lg font-semibold tracking-tight">
-            e10d CRM
+      <aside className="hidden w-52 shrink-0 border-r border-border bg-sidebar md:flex md:flex-col">
+        <div className="border-b border-border px-4 py-5">
+          <Link
+            href="/calendar"
+            className="text-lg font-normal tracking-tight text-foreground no-underline"
+          >
+            e10d
           </Link>
-          <p className="mt-0.5 text-xs text-muted-foreground">Meeting prep</p>
+          <p className="mt-1 text-xs text-muted-foreground">Meeting prep</p>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.href} {...item} />
           ))}
         </nav>
-        <div className="flex items-center gap-2 border-t border-sidebar-border p-3">
+        <div className="flex items-center gap-1 border-t border-border p-3">
           <ThemeToggle />
-          <LogoutButton className="flex-1 justify-start" />
+          <LogoutButton className="flex-1 justify-start text-muted-foreground hover:text-foreground" />
         </div>
+        <p className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
+          Designing for inevitable decay
+        </p>
       </aside>
 
       <div className="flex min-h-full flex-1 flex-col pb-16 md:pb-0">
         <header className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
-          <Link href="/contacts" className="font-semibold">
-            e10d CRM
+          <Link
+            href="/calendar"
+            className="text-lg font-normal text-foreground no-underline"
+          >
+            e10d
           </Link>
           <ThemeToggle />
         </header>
@@ -90,8 +95,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium",
-                active ? "text-foreground" : "text-muted-foreground",
+                "flex flex-1 flex-col items-center gap-1 py-2 text-xs",
+                active
+                  ? "font-medium text-foreground underline decoration-accent/50 underline-offset-4"
+                  : "text-muted-foreground",
               )}
             >
               <Icon className="size-5" />

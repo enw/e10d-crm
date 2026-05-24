@@ -43,12 +43,12 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-xl border border-border bg-card p-8 shadow-sm">
-        <h1 className="text-xl font-semibold tracking-tight">e10d CRM</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Homelab sign-in</p>
+    <main className="flex flex-1 items-center justify-center px-4 py-10">
+      <div className="w-full max-w-sm">
+        <h1 className="mb-4 text-2xl leading-tight sm:text-3xl">e10d</h1>
+        <p className="text-base text-muted-foreground">Homelab CRM sign-in</p>
 
-        <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+        <form className="mt-8 space-y-4" onSubmit={onSubmit}>
           <div>
             <Label htmlFor="password">Password</Label>
             <Input

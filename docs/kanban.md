@@ -22,24 +22,29 @@ Move tickets left → right. Only one **In Progress** slice at a time keeps inte
 
 ## Dependency Graph
 
+Done nodes are green; open nodes are gray.
+
 ```mermaid
 flowchart LR
-  T01 --> T02
-  T02 --> T03
-  T02 --> T04
-  T04 --> T05
-  T05 --> T06
-  T06 --> T07
-  T07 --> T08
-  T08 --> T09
-  T09 --> T10
-  T04 --> T11
-  T11 --> T12
-  T08 --> T13
-  T13 --> T14
-  T09 --> T15
-  T04 --> T16
-  T02 --> T03
+  T01:::done --> T02:::done
+  T02:::done --> T03:::done
+  T02:::done --> T04:::done
+  T04:::done --> T05:::done
+  T05:::done --> T06:::done
+  T06:::done --> T07:::done
+  T07:::done --> T08:::done
+  T08:::done --> T09:::done
+  T09:::done --> T10:::done
+  T04:::done --> T11:::done
+  T11:::done --> T12:::open
+  T08:::done --> T13:::open
+  T13:::open --> T14:::open
+  T09:::done --> T15:::open
+  T04:::done --> T16:::open
+  T11:::done --> T16:::open
+
+  classDef done fill:#22c55e,color:#fff,stroke:#16a34a
+  classDef open fill:#e5e7eb,color:#111827,stroke:#9ca3af
 ```
 
 Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (T11–T12). Enrichment (T13–T14) and export (T15) join after dossier exists.
@@ -74,7 +79,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Backlog |
 | **Type** | HITL (Google Cloud OAuth credentials) |
-| **Blocked by** | T01 |
+| **Blocked by** | <span style="color:#16a34a">T01</span> |
 | **User stories** | US-2 |
 
 **What to build:** Auth.js Google provider, `google_accounts` table, AES-256-GCM token storage, `/settings` page showing connected accounts, "Connect Google Account" OAuth flow with contacts + calendar readonly scopes.
@@ -93,7 +98,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Backlog |
 | **Type** | AFK |
-| **Blocked by** | T02 |
+| **Blocked by** | <span style="color:#16a34a">T02</span> |
 | **User stories** | US-3 |
 
 **What to build:** Disconnect action on settings; delete `google_contact_links` + `calendar_events` for account; revoke token (best effort); remove `google_accounts` row.
@@ -111,7 +116,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Backlog |
 | **Type** | AFK |
-| **Blocked by** | T02 |
+| **Blocked by** | <span style="color:#16a34a">T02</span> |
 | **User stories** | US-4 (partial), US-5 (partial) |
 
 **What to build:** Contact sync engine (People API), `contacts` + `google_contact_links` tables, pull on connect, minimal `/contacts` list (name + primary email).
@@ -130,7 +135,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Backlog |
 | **Type** | AFK |
-| **Blocked by** | T04 |
+| **Blocked by** | <span style="color:#16a34a">T04</span> |
 | **User stories** | US-4 |
 
 **What to build:** When second Google account connects, merge contacts sharing normalized primary email into one canonical row; multiple `google_contact_links` per contact.
@@ -148,7 +153,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T05 |
+| **Blocked by** | <span style="color:#16a34a">T05</span> |
 | **User stories** | US-6 (name, email only — tags/notes in T09) |
 
 **What to build:** Search input on `/contacts`; filter by display name (trigram) and email substring.
@@ -166,7 +171,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T06 |
+| **Blocked by** | <span style="color:#16a34a">T06</span> |
 | **User stories** | US-7 |
 
 **What to build:** `tags` + `contact_tags` tables, tag picker on contact edit, tags column on list, filter by tag on `/contacts`.
@@ -185,7 +190,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T07 |
+| **Blocked by** | <span style="color:#16a34a">T07</span> |
 | **User stories** | US-8 (partial) |
 
 **What to build:** `/contacts/[id]` dossier: display name, emails, phones, company, title, tags, enrichment summary placeholder.
@@ -203,7 +208,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T08 |
+| **Blocked by** | <span style="color:#16a34a">T08</span> |
 | **User stories** | US-9, US-14 (partial), US-6 (notes search) |
 
 **What to build:** `interactions` table, add note form on dossier, reverse-chronological timeline (notes, tag changes), update `last_interaction_at`, extend search to note content.
@@ -222,7 +227,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T09 |
+| **Blocked by** | <span style="color:#16a34a">T09</span> |
 | **User stories** | US-8 (edit path) |
 
 **What to build:** `/contacts/[id]/edit`, `user_overrides` jsonb, edit sets override flags, re-sync skips overridden fields.
@@ -241,7 +246,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Done |
 | **Type** | AFK |
-| **Blocked by** | T04 |
+| **Blocked by** | <span style="color:#16a34a">T04</span> |
 | **User stories** | US-12 |
 
 **What to build:** Calendar sync engine (30d past / 90d future), `calendar_events` table, `/calendar` page listing upcoming events.
@@ -257,9 +262,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Ready |
 | **Type** | AFK |
-| **Blocked by** | T11, T08 |
+| **Blocked by** | <span style="color:#16a34a">T11</span>, <span style="color:#16a34a">T08</span> |
 | **User stories** | US-13, US-8 (calendar on dossier) |
 
 **What to build:** Match attendee emails to contacts; `linked_contact_id` on events; show upcoming linked events on dossier; link from calendar row to contact.
@@ -275,9 +280,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Ready |
 | **Type** | AFK |
-| **Blocked by** | T08 |
+| **Blocked by** | <span style="color:#16a34a">T08</span> |
 | **User stories** | US-10, US-11 (partial) |
 
 **What to build:** Enricher plugin interface, LeadPure provider, `enrichment_runs` table, "Enrich" button on dossier, merge into `enrichment_blob` + display fields (respecting `user_overrides`).
@@ -296,7 +301,7 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 |---|---|
 | **Status** | Backlog |
 | **Type** | AFK |
-| **Blocked by** | T13 |
+| **Blocked by** | #13 |
 | **User stories** | US-11 |
 
 **What to build:** Batch enrich action (settings or dossier list select), chunked processing, exponential backoff (1s → 60s, 5 retries), per-contact status in `enrichment_runs`.
@@ -313,9 +318,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Ready |
 | **Type** | AFK |
-| **Blocked by** | T09 |
+| **Blocked by** | <span style="color:#16a34a">T09</span> |
 | **User stories** | US-15 |
 
 **What to build:** `GET /api/export/contacts` (session required), download button on settings, versioned JSON per technical-design §10.
@@ -331,9 +336,9 @@ Parallel lanes after T04: **contacts** (T05–T10, T13–T15) and **calendar** (
 
 | Field | Value |
 |---|---|
-| **Status** | Backlog |
+| **Status** | Ready |
 | **Type** | AFK |
-| **Blocked by** | T04, T11 |
+| **Blocked by** | <span style="color:#16a34a">T04</span>, <span style="color:#16a34a">T11</span> |
 | **User stories** | (infra — supports all sync stories) |
 
 **What to build:** `POST /api/sync/trigger` with cron secret, in-process 6h scheduler, manual "Sync now" on settings, last sync timestamps + error surfacing.
@@ -369,24 +374,26 @@ T03 (disconnect) can slot in after T02 for early cleanup testing; defer if focus
 
 GitHub Issues: https://github.com/enw/e10d-crm/issues
 
+**Blocked by:** <span style="color:#16a34a">green</span> = dependency done · default = still open
+
 | ID | GitHub | Title | Status | Blocked by |
 |---|---|---|---|---|
 | T01 | [#1](https://github.com/enw/e10d-crm/issues/1) | App shell + password login | Done | — |
-| T02 | [#2](https://github.com/enw/e10d-crm/issues/2) | Connect a Google account | Done | #1 |
-| T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Done | #2 |
-| T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Done | #2 |
-| T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Done | #4 |
-| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Done | #5 |
-| T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Done | #6 |
-| T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Done | #7 |
-| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Done | #8 |
-| T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Done | #9 |
-| T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Done | #4 |
-| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Ready | #11, #8 |
-| T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Backlog | #8 |
+| T02 | [#2](https://github.com/enw/e10d-crm/issues/2) | Connect a Google account | Done | <span style="color:#16a34a">#1</span> |
+| T03 | [#3](https://github.com/enw/e10d-crm/issues/3) | Disconnect a Google account | Done | <span style="color:#16a34a">#2</span> |
+| T04 | [#4](https://github.com/enw/e10d-crm/issues/4) | Sync contacts from Google | Done | <span style="color:#16a34a">#2</span> |
+| T05 | [#5](https://github.com/enw/e10d-crm/issues/5) | Multi-account dedup by email | Done | <span style="color:#16a34a">#4</span> |
+| T06 | [#6](https://github.com/enw/e10d-crm/issues/6) | Contact search | Done | <span style="color:#16a34a">#5</span> |
+| T07 | [#7](https://github.com/enw/e10d-crm/issues/7) | Tags: create, assign, filter | Done | <span style="color:#16a34a">#6</span> |
+| T08 | [#8](https://github.com/enw/e10d-crm/issues/8) | Contact dossier page | Done | <span style="color:#16a34a">#7</span> |
+| T09 | [#9](https://github.com/enw/e10d-crm/issues/9) | Notes + interaction timeline | Done | <span style="color:#16a34a">#8</span> |
+| T10 | [#10](https://github.com/enw/e10d-crm/issues/10) | Edit contact + user_overrides | Done | <span style="color:#16a34a">#9</span> |
+| T11 | [#11](https://github.com/enw/e10d-crm/issues/11) | Calendar sync + events list | Done | <span style="color:#16a34a">#4</span> |
+| T12 | [#12](https://github.com/enw/e10d-crm/issues/12) | Link calendar events to contacts | Ready | <span style="color:#16a34a">#11</span>, <span style="color:#16a34a">#8</span> |
+| T13 | [#13](https://github.com/enw/e10d-crm/issues/13) | Enrichment + LeadPure (single) | Ready | <span style="color:#16a34a">#8</span> |
 | T14 | [#14](https://github.com/enw/e10d-crm/issues/14) | Batch enrichment with retry | Backlog | #13 |
-| T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Backlog | #9 |
-| T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Backlog | #4, #11 |
+| T15 | [#15](https://github.com/enw/e10d-crm/issues/15) | JSON export | Ready | <span style="color:#16a34a">#9</span> |
+| T16 | [#16](https://github.com/enw/e10d-crm/issues/16) | Background sync + status | Ready | <span style="color:#16a34a">#4</span>, <span style="color:#16a34a">#11</span> |
 
 ---
 

@@ -122,6 +122,16 @@ export async function getGoogleAccountByEmail(email: string) {
   return row ?? null;
 }
 
+export async function listGoogleAccountSources(): Promise<
+  Array<{ id: string; email: string }>
+> {
+  const accounts = await listGoogleAccounts();
+  return accounts.map((account) => ({
+    id: account.id,
+    email: account.email,
+  }));
+}
+
 export async function getGoogleAccountById(id: string) {
   const db = getDb();
   const [row] = await db

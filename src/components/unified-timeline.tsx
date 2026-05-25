@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import {
+  AccountColorDot,
+  AccountColorStrip,
+} from "@/components/account-color-dot";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { AccountSource } from "@/lib/google/account-colors";
 import type { ContactMeetingSummary } from "@/lib/sync/calendar-attendees";
 import type { Interaction } from "@/db/schema";
 
@@ -55,26 +60,45 @@ function formatMeetingTime(start: Date | null, end: Date | null) {
   return `${startLabel} – ${endLabel}`;
 }
 
-function MeetingTimelineEntry({ item }: { item: TimelineMeetingItem }) {
+function MeetingTimelineEntry({
+  item,
+  accountSources,
+}: {
+  item: TimelineMeetingItem;
+  accountSources: AccountSource[];
+}) {
   const dateKey = item.startTime?.toISOString().slice(0, 10) ?? "unknown";
 
   return (
-    <li className="border-l-2 border-primary/30 pl-4">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">
-        meeting · {item.startTime?.toLocaleString()}
-      </p>
-      <p className="mt-1 text-sm font-medium">
-        {item.title || "Untitled event"}
-      </p>
-      <p className="text-sm text-muted-foreground">
-        {formatMeetingTime(item.startTime, item.endTime)}
-      </p>
-      <p className="mt-1 text-xs text-muted-foreground">{item.accountEmail}</p>
-      <Button variant="link" size="sm" className="h-auto px-0" asChild>
-        <Link href={`/calendar?event=${item.id}&date=${dateKey}`}>
-          Open in calendar
-        </Link>
-      </Button>
+    <li className="flex gap-3">
+      <AccountColorStrip
+        accountId={item.googleAccountId}
+        accounts={accountSources}
+        className="mt-1 min-h-full"
+      />
+      <div className="min-w-0 flex-1 pb-1">
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">
+          meeting · {item.startTime?.toLocaleString()}
+        </p>
+        <p className="mt-1 text-sm font-medium">
+          {item.title || "Untitled event"}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {formatMeetingTime(item.startTime, item.endTime)}
+        </p>
+        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <AccountColorDot
+            accountId={item.googleAccountId}
+            accounts={accountSources}
+          />
+          {item.accountEmail}
+        </p>
+        <Button variant="link" size="sm" className="h-auto px-0" asChild>
+          <Link href={`/calendar?event=${item.id}&date=${dateKey}`}>
+            Open in calendar
+          </Link>
+        </Button>
+      </div>
     </li>
   );
 }
@@ -94,10 +118,12 @@ export function UnifiedTimeline({
   upcomingMeetings,
   pastMeetings,
   interactions,
+  accountSources,
 }: {
   upcomingMeetings: ContactMeetingSummary[];
   pastMeetings: ContactMeetingSummary[];
   interactions: Interaction[];
+  accountSources: AccountSource[];
 }) {
   const [showPast, setShowPast] = useState(false);
 
@@ -127,6 +153,7 @@ export function UnifiedTimeline({
               <MeetingTimelineEntry
                 key={meeting.id}
                 item={{ ...meeting, kind: "meeting", isUpcoming: true }}
+                accountSources={accountSources}
               />
             ))}
           </ul>
@@ -162,6 +189,7 @@ export function UnifiedTimeline({
                 <MeetingTimelineEntry
                   key={meeting.id}
                   item={{ ...meeting, kind: "meeting", isUpcoming: false }}
+                  accountSources={accountSources}
                 />
               ))}
             </ul>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { AccountColorDot } from "@/components/account-color-dot";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import type { AccountSource } from "@/lib/google/account-colors";
 import type { ResolvedAttendee } from "@/lib/sync/calendar-attendees";
 
 type EventDetail = {
@@ -24,6 +26,7 @@ type EventDetail = {
   description: string | null;
   startTime: string | null;
   endTime: string | null;
+  googleAccountId: string;
   accountEmail: string;
   attendees: Array<
     Omit<ResolvedAttendee, "lastInteractionAt"> & {
@@ -189,9 +192,11 @@ function AttendeeCard({
 
 function EventPrepContent({
   eventId,
+  accountSources,
   onContactCreated,
 }: {
   eventId: string;
+  accountSources: AccountSource[];
   onContactCreated: () => void;
 }) {
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -258,7 +263,13 @@ function EventPrepContent({
             {event.description}
           </p>
         ) : null}
-        <p className="text-xs text-muted-foreground">{event.accountEmail}</p>
+        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <AccountColorDot
+            accountId={event.googleAccountId}
+            accounts={accountSources}
+          />
+          {event.accountEmail}
+        </p>
         <div className="space-y-3">
           <h3 className="text-sm font-medium">
             Attendees ({event.attendees.length})
@@ -284,11 +295,13 @@ function EventPrepContent({
 
 export function EventPrepPanel({
   eventId,
+  accountSources,
   open,
   onOpenChange,
   onContactCreated,
 }: {
   eventId: string | null;
+  accountSources: AccountSource[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onContactCreated: () => void;
@@ -301,6 +314,7 @@ export function EventPrepPanel({
             <EventPrepContent
               key={eventId}
               eventId={eventId}
+              accountSources={accountSources}
               onContactCreated={onContactCreated}
             />
           ) : (

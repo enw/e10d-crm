@@ -155,12 +155,39 @@ export type ContactListItem = {
   emails: string[];
   company: string | null;
   tags: { id: string; name: string }[];
+  googleAccountIds: string[];
 };
 
 export type ContactSearchOptions = {
   q?: string;
   tagId?: string;
 };
+
+async function loadGoogleAccountsForContacts(contactIds: string[]) {
+  if (contactIds.length === 0) {
+    return new Map<string, string[]>();
+  }
+
+  const db = getDb();
+  const rows = await db
+    .select({
+      contactId: googleContactLinks.contactId,
+      googleAccountId: googleContactLinks.googleAccountId,
+    })
+    .from(googleContactLinks)
+    .where(inArray(googleContactLinks.contactId, contactIds));
+
+  const byContact = new Map<string, string[]>();
+  for (const row of rows) {
+    const existing = byContact.get(row.contactId) ?? [];
+    if (!existing.includes(row.googleAccountId)) {
+      existing.push(row.googleAccountId);
+    }
+    byContact.set(row.contactId, existing);
+  }
+
+  return byContact;
+}
 
 async function loadTagsForContacts(contactIds: string[]) {
   if (contactIds.length === 0) {
@@ -272,10 +299,14 @@ export async function searchContacts(
     .orderBy(contacts.displayName);
 
   const tagsByContact = await loadTagsForContacts(rows.map((row) => row.id));
+  const accountsByContact = await loadGoogleAccountsForContacts(
+    rows.map((row) => row.id),
+  );
 
   return rows.map((row) => ({
     ...row,
     tags: tagsByContact.get(row.id) ?? [],
+    googleAccountIds: accountsByContact.get(row.id) ?? [],
   }));
 }
 

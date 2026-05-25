@@ -6,6 +6,7 @@ import { ContactNoteForm } from "@/components/contact-note-form";
 import { ContactTagManager } from "@/components/contact-tag-manager";
 import { UnifiedTimeline } from "@/components/unified-timeline";
 import { Button } from "@/components/ui/button";
+import { listGoogleAccountSources } from "@/lib/google/accounts";
 import { getLatestEnrichmentRun } from "@/lib/enrichment/pipeline";
 import { listInteractionsForContact } from "@/lib/interactions";
 import { listMeetingsForContact } from "@/lib/sync/calendar-attendees";
@@ -60,12 +61,14 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
     notFound();
   }
 
-  const [tags, interactions, meetings, latestEnrichment] = await Promise.all([
-    listTagsForContact(id),
-    listInteractionsForContact(id, 50),
-    listMeetingsForContact(id),
-    getLatestEnrichmentRun(id),
-  ]);
+  const [tags, interactions, meetings, latestEnrichment, accountSources] =
+    await Promise.all([
+      listTagsForContact(id),
+      listInteractionsForContact(id, 50),
+      listMeetingsForContact(id),
+      getLatestEnrichmentRun(id),
+      listGoogleAccountSources(),
+    ]);
 
   const enrichmentBlob =
     (contact.enrichmentBlob as Record<string, unknown> | null) ?? null;
@@ -139,6 +142,7 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
               upcomingMeetings={meetings.upcoming}
               pastMeetings={meetings.past}
               interactions={interactions}
+              accountSources={accountSources}
             />
           </div>
         </div>

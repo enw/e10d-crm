@@ -35,6 +35,7 @@ export type CalendarEventDetail = {
   description: string | null;
   startTime: Date | null;
   endTime: Date | null;
+  googleAccountId: string;
   accountEmail: string;
   attendees: ResolvedAttendee[];
 };
@@ -45,6 +46,7 @@ export type CalendarEventFeedItem = {
   description: string | null;
   startTime: string | null;
   endTime: string | null;
+  googleAccountId: string;
   accountEmail: string;
   linkedContactNames: string[];
 };
@@ -54,6 +56,7 @@ export type ContactMeetingSummary = {
   title: string | null;
   startTime: Date | null;
   endTime: Date | null;
+  googleAccountId: string;
   accountEmail: string;
 };
 
@@ -62,6 +65,7 @@ export type NextMeetingBadge = {
   eventId: string;
   title: string | null;
   startTime: Date;
+  googleAccountId: string;
 };
 
 type ContactRow = {
@@ -212,6 +216,7 @@ export async function getCalendarEventById(
       description: calendarEvents.description,
       startTime: calendarEvents.startTime,
       endTime: calendarEvents.endTime,
+      googleAccountId: calendarEvents.googleAccountId,
       accountEmail: googleAccounts.email,
       attendees: calendarEvents.attendees,
     })
@@ -234,6 +239,7 @@ export async function getCalendarEventById(
     description: row.description,
     startTime: row.startTime,
     endTime: row.endTime,
+    googleAccountId: row.googleAccountId,
     accountEmail: row.accountEmail,
     attendees: resolveAttendees(row.attendees, row.accountEmail, context),
   };
@@ -250,6 +256,7 @@ export async function listCalendarEventsForFeed(): Promise<
       description: calendarEvents.description,
       startTime: calendarEvents.startTime,
       endTime: calendarEvents.endTime,
+      googleAccountId: calendarEvents.googleAccountId,
       accountEmail: googleAccounts.email,
       attendees: calendarEvents.attendees,
     })
@@ -268,6 +275,7 @@ export async function listCalendarEventsForFeed(): Promise<
     description: row.description,
     startTime: row.startTime?.toISOString() ?? null,
     endTime: row.endTime?.toISOString() ?? null,
+    googleAccountId: row.googleAccountId,
     accountEmail: row.accountEmail,
     linkedContactNames: linkedContactNamesFromAttendees(
       row.attendees,
@@ -303,6 +311,7 @@ export async function listMeetingsForContact(
       title: calendarEvents.title,
       startTime: calendarEvents.startTime,
       endTime: calendarEvents.endTime,
+      googleAccountId: calendarEvents.googleAccountId,
       accountEmail: googleAccounts.email,
     })
     .from(calendarEvents)
@@ -367,6 +376,7 @@ export async function getNextMeetingsForContacts(
       title: calendarEvents.title,
       startTime: calendarEvents.startTime,
       attendees: calendarEvents.attendees,
+      googleAccountId: calendarEvents.googleAccountId,
     })
     .from(calendarEvents)
     .where(gte(calendarEvents.startTime, now))
@@ -387,6 +397,7 @@ export async function getNextMeetingsForContacts(
           eventId: row.id,
           title: row.title,
           startTime: row.startTime,
+          googleAccountId: row.googleAccountId,
         });
       }
     }

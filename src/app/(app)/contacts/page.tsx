@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AccountLegend } from "@/components/account-legend";
+import { AccountSourceDots } from "@/components/account-color-dot";
 import { ContactSearchForm } from "@/components/contact-search-form";
+import { NextMeetingBadge } from "@/components/next-meeting-badge";
 import { TagFilter } from "@/components/tag-filter";
 import { Badge } from "@/components/ui/badge";
+import { listGoogleAccountSources } from "@/lib/google/accounts";
 import { getNextMeetingsForContacts } from "@/lib/sync/calendar-attendees";
 import { searchContacts } from "@/lib/sync/contacts";
 import { listTags } from "@/lib/tags";
@@ -29,9 +33,10 @@ function formatNextMeeting(startTime: Date) {
 
 export default async function ContactsPage({ searchParams }: ContactsPageProps) {
   const { q = "", tag = "" } = await searchParams;
-  const [contacts, tags] = await Promise.all([
+  const [contacts, tags, accountSources] = await Promise.all([
     searchContacts({ q, tagId: tag || undefined }),
     listTags(),
+    listGoogleAccountSources(),
   ]);
 
   const nextMeetings = await getNextMeetingsForContacts(
@@ -46,6 +51,12 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
           {contacts.length} contact{contacts.length === 1 ? "" : "s"}
           {q.trim() || tag ? " matching filters" : " synced from Google"}
         </p>
+        {accountSources.length > 0 ? (
+          <AccountLegend
+            accounts={accountSources}
+            className="mt-3 flex flex-wrap gap-x-4 gap-y-1"
+          />
+        ) : null}
       </header>
 
       <section className="mt-6 space-y-4">
@@ -56,7 +67,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       </section>
 
       {contacts.length === 0 ? (
-        <section className="mt-8 rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center text-sm text-muted-foreground">
+        <section className="mt-8 rounded-sm border border-dashed border-border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
           {q.trim() || tag ? (
             <>No contacts match your search.</>
           ) : (
@@ -64,7 +75,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
               No contacts yet. Connect a Google account in{" "}
               <Link
                 href="/settings"
-                className="font-medium text-foreground underline"
+                className="text-foreground underline decoration-accent/50 underline-offset-4"
               >
                 Settings
               </Link>
@@ -83,23 +94,34 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
                   className="block px-4 py-3 hover:bg-muted/50"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium">
-                        {contact.displayName || contact.emails[0] || "Unknown"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {contact.emails[0] ?? "No email"}
-                        {contact.company ? ` · ${contact.company}` : ""}
-                      </p>
+                    <div className="flex min-w-0 flex-1 items-start gap-2">
+                      <AccountSourceDots
+                        accountIds={contact.googleAccountIds}
+                        accounts={accountSources}
+                        className="mt-1.5"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium">
+                          {contact.displayName ||
+                            contact.emails[0] ||
+                            "Unknown"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {contact.emails[0] ?? "No email"}
+                          {contact.company ? ` · ${contact.company}` : ""}
+                        </p>
+                      </div>
                     </div>
                     {nextMeeting ? (
-                      <Badge variant="secondary" className="shrink-0">
-                        Next: {formatNextMeeting(nextMeeting.startTime)}
-                      </Badge>
+                      <NextMeetingBadge
+                        label={formatNextMeeting(nextMeeting.startTime)}
+                        googleAccountId={nextMeeting.googleAccountId}
+                        accountSources={accountSources}
+                      />
                     ) : null}
                   </div>
                   {contact.tags.length > 0 ? (
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <div className="mt-2 flex flex-wrap gap-1 pl-5">
                       {contact.tags.map((tagItem) => (
                         <Badge key={tagItem.id} variant="outline">
                           {tagItem.name}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { CrmCalendar } from "@/components/calendar/crm-calendar";
+import { listGoogleAccountSources } from "@/lib/google/accounts";
 import {
   CALENDAR_FUTURE_DAYS,
   CALENDAR_PAST_DAYS,
@@ -16,7 +17,10 @@ type CalendarPageProps = {
 
 export default async function CalendarPage({ searchParams }: CalendarPageProps) {
   const { event: initialEventId, date: initialDate } = await searchParams;
-  const events = await listCalendarEventsForFeed();
+  const [events, accountSources] = await Promise.all([
+    listCalendarEventsForFeed(),
+    listGoogleAccountSources(),
+  ]);
 
   return (
     <main className="flex min-h-0 flex-1 flex-col">
@@ -43,6 +47,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
         <Suspense fallback={null}>
           <CrmCalendar
             initialEvents={events}
+            accountSources={accountSources}
             initialEventId={initialEventId}
             initialDate={initialDate}
           />

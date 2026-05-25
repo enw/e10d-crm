@@ -6,6 +6,7 @@ import {
   googleOAuthErrorMessage,
   isGooglePlaygroundClientId,
 } from "@/lib/auth/google-oauth-errors";
+import { publicAppUrl } from "@/lib/auth/app-url";
 import { listGoogleAccounts } from "@/lib/google/accounts";
 import { listContactIdsForBatchEnrichment } from "@/lib/enrichment/batch";
 
@@ -23,7 +24,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const usingPlaygroundClient = isGooglePlaygroundClientId(
     process.env.GOOGLE_CLIENT_ID,
   );
-  const callbackUri = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/auth/callback/google`;
+  const callbackUri = `${publicAppUrl()}/api/auth/callback/google`;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 md:px-6">

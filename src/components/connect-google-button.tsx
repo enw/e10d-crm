@@ -1,10 +1,11 @@
 import { headers } from "next/headers";
 
+import { internalAppUrl } from "@/lib/auth/app-url";
+
 async function getCsrfToken(): Promise<string> {
   const headerStore = await headers();
   const cookie = headerStore.get("cookie") ?? "";
-  const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-  const response = await fetch(`${baseUrl}/api/auth/csrf`, {
+  const response = await fetch(`${internalAppUrl()}/api/auth/csrf`, {
     headers: { cookie },
     cache: "no-store",
   });

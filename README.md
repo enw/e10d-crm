@@ -213,6 +213,9 @@ docs/
 
 ## Troubleshooting
 
+**Container can't resolve Tailscale hostname (`ENOTFOUND westwind`)**  
+`NEXTAUTH_URL` must stay as `http://westwind:3101` (what the browser uses). Server-side self-fetch uses `http://127.0.0.1:3000` inside the container automatically. Rebuild after pulling this fix.
+
 **Google OAuth redirect mismatch**  
 `NEXTAUTH_URL` must exactly match the URL in your browser (including hostname). Update Google Console redirect URI to match Settings.
 

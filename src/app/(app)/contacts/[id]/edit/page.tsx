@@ -22,7 +22,7 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
   const title = contact.displayName || contact.emails[0] || "Unknown contact";
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-y-auto px-4 py-8">
       <header className="flex items-start justify-between gap-4 border-b border-zinc-200 pb-4">
         <div>
           <Link

@@ -182,16 +182,38 @@
   z-index: 1;
 }
 
-.sx-react-calendar-wrapper {
+.crm-calendar .sx-react-calendar-wrapper,
+.crm-calendar .sx__calendar-wrapper {
+  width: 100%;
   height: 100%;
+  min-height: 0;
+  min-width: 0;
 }
 
-.sx__calendar {
+.crm-calendar .sx-react-calendar-wrapper {
+  display: flex;
+}
+
+.crm-calendar .sx__calendar-wrapper {
+  flex: 1;
+}
+
+.crm-calendar .sx__calendar {
+  height: 100%;
+  min-height: 0;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--card);
 }
 
-.sx__event {
+.crm-calendar .sx__calendar-header {
+  padding: var(--sx-spacing-padding3) var(--sx-spacing-padding4);
+}
+
+.crm-calendar .sx__view-selection {
+  display: none;
+}
+
+.crm-calendar .sx__event {
   border-radius: var(--radius-sm) !important;
 }

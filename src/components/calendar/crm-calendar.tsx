@@ -140,29 +140,35 @@ export function CrmCalendar({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border px-4 py-3">
+    <div className="crm-calendar flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border px-4 py-3 md:px-6">
         <Tabs defaultValue="day" onValueChange={setView}>
-          <TabsList>
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month-grid">Month</TabsTrigger>
+          <TabsList className="h-8">
+            <TabsTrigger value="day" className="px-2.5 text-xs">
+              Day
+            </TabsTrigger>
+            <TabsTrigger value="week" className="px-2.5 text-xs">
+              Week
+            </TabsTrigger>
+            <TabsTrigger value="month-grid" className="px-2.5 text-xs">
+              Month
+            </TabsTrigger>
           </TabsList>
         </Tabs>
-        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
+        <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           {orderedAccounts.length > 0 ? (
             <AccountLegend
               accounts={orderedAccounts}
-              className="flex flex-wrap justify-end gap-x-4 gap-y-1"
+              className="flex flex-wrap justify-end gap-x-3 gap-y-1"
             />
           ) : null}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {initialEvents.length} event{initialEvents.length === 1 ? "" : "s"}
           </p>
         </div>
       </div>
 
-      <div className="min-h-[560px] flex-1 overflow-hidden p-2 [&_.sx__calendar]:h-full">
+      <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-1 overflow-hidden px-2 pb-2 pt-1 [&_.sx-react-calendar-wrapper]:col-start-1 [&_.sx-react-calendar-wrapper]:row-start-1">
         <ScheduleXCalendar calendarApp={calendar} />
       </div>
 

@@ -36,7 +36,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="flex min-h-full flex-col overflow-x-clip">
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
         <div aria-hidden="true" className="page-backdrop" />
         <ThemeProvider
           attribute="class"
@@ -45,7 +45,7 @@ export default function RootLayout({
           storageKey="e10d-theme"
           disableTransitionOnChange
         >
-          <div className="app-layer flex min-h-full flex-1 flex-col">{children}</div>
+          <div className="app-layer flex min-h-dvh flex-1 flex-col">{children}</div>
         </ThemeProvider>
       </body>
     </html>

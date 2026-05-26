@@ -81,7 +81,7 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
   const title = contact.displayName || contact.emails[0] || "Unknown contact";
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8 md:px-6">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-y-auto px-4 py-8 md:px-6">
       <header className="border-b border-border pb-4">
         <Link
           href="/contacts"

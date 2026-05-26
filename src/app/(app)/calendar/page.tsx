@@ -23,12 +23,11 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
   ]);
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col">
-      <header className="border-b border-border px-4 py-4 md:px-6">
-        <h1 className="text-2xl leading-tight sm:text-3xl">Calendar</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Meeting prep · {CALENDAR_PAST_DAYS}d past · {CALENDAR_FUTURE_DAYS}d
-          future
+    <main className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
+      <header className="flex shrink-0 flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border px-4 py-3 md:px-6">
+        <h1 className="text-xl leading-none sm:text-2xl">Calendar</h1>
+        <p className="text-sm text-muted-foreground">
+          {CALENDAR_PAST_DAYS}d past · {CALENDAR_FUTURE_DAYS}d future
         </p>
       </header>
 

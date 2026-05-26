@@ -47,8 +47,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-full flex-col md:flex-row">
-      <aside className="hidden w-52 shrink-0 border-r border-border bg-sidebar md:flex md:flex-col">
+    <div className="flex h-dvh overflow-hidden md:flex-row">
+      <aside className="hidden h-full w-52 shrink-0 border-r border-border bg-sidebar md:flex md:flex-col">
         <div className="border-b border-border px-4 py-5">
           <Link
             href="/calendar"
@@ -72,8 +72,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </p>
       </aside>
 
-      <div className="flex min-h-full flex-1 flex-col pb-16 md:pb-0">
-        <header className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pb-16 md:pb-0">
+        <header className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3 md:hidden">
           <Link
             href="/calendar"
             className="text-lg font-normal text-foreground no-underline"
@@ -82,7 +82,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <ThemeToggle />
         </header>
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {children}
+        </div>
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-background/95 backdrop-blur md:hidden">

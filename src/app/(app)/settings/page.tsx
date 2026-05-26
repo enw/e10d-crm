@@ -92,7 +92,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </p>
       </section>
 
-      <section className="mt-8 space-y-4">
+      <section id="google-accounts" className="mt-8 space-y-4 scroll-mt-8">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-medium text-zinc-900">Google accounts</h2>
           <ConnectGoogleButton />

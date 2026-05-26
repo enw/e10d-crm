@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CommandActionsTrigger } from "@/components/command-palette/command-trigger";
 import { EnrichContactButton } from "@/components/enrich-contact-button";
 import { ContactNoteForm } from "@/components/contact-note-form";
 import { ContactTagManager } from "@/components/contact-tag-manager";
@@ -91,7 +92,12 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
         </Link>
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl leading-tight sm:text-3xl">{title}</h1>
+            <h1
+              className="text-2xl leading-tight sm:text-3xl"
+              data-command-contact-name={title}
+            >
+              {title}
+            </h1>
             {contact.company || contact.title ? (
               <p className="mt-1 text-sm text-muted-foreground">
                 {[contact.title, contact.company].filter(Boolean).join(" · ")}
@@ -103,9 +109,12 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
               </p>
             ) : null}
           </div>
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/contacts/${contact.id}/edit`}>Edit</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <CommandActionsTrigger className="md:hidden" />
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/contacts/${contact.id}/edit`}>Edit</Link>
+            </Button>
+          </div>
         </div>
       </header>
 

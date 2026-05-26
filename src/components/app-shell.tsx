@@ -1,12 +1,18 @@
 "use client";
 
+import { Suspense, type ReactNode } from "react";
+
+import { CommandPalette } from "@/components/command-palette/command-palette";
+import { CommandPaletteProvider } from "@/components/command-palette/command-palette-provider";
+import {
+  CommandTriggerButton,
+} from "@/components/command-palette/command-trigger";
+import { LogoutButton } from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Calendar, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
 
-import { LogoutButton } from "@/components/logout-button";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -43,7 +49,7 @@ function NavLink({
   );
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+function AppShellFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
@@ -57,6 +63,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             e10d
           </Link>
           <p className="mt-1 text-xs text-muted-foreground">Meeting prep</p>
+        </div>
+        <div className="px-3 pt-3">
+          <CommandTriggerButton showLabel className="w-full justify-start px-3" />
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV_ITEMS.map((item) => (
@@ -80,7 +89,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             e10d
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <CommandTriggerButton />
+            <ThemeToggle />
+          </div>
         </header>
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {children}
@@ -110,5 +122,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         })}
       </nav>
     </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <CommandPaletteProvider>
+      <AppShellFrame>{children}</AppShellFrame>
+      <Suspense fallback={null}>
+        <CommandPalette />
+      </Suspense>
+    </CommandPaletteProvider>
   );
 }

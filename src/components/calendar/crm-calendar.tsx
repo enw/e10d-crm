@@ -19,6 +19,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AccountLegend } from "@/components/account-legend";
 import { EventPrepPanel } from "@/components/calendar/event-prep-panel";
 import { useCurrentTimeIndicator } from "@/components/calendar/use-current-time-indicator";
+import { useCalendarKeyboardNav } from "@/components/calendar/use-calendar-keyboard-nav";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -101,6 +102,11 @@ export function CrmCalendar({
   const calendarRootRef = useRef<HTMLDivElement>(null);
   const eventsRef = useRef(initialEvents);
   const currentViewRef = useRef(currentView);
+  const selectedDateRef = useRef(
+    initialDate
+      ? Temporal.PlainDate.from(initialDate)
+      : Temporal.Now.plainDateISO(),
+  );
   const autoScrollRef = useRef<(range: DateRange) => void>(() => {});
   const [controlsPlugin] = useState(() => createCalendarControlsPlugin());
   const [eventsPlugin] = useState(() => createEventsServicePlugin());
@@ -153,6 +159,9 @@ export function CrmCalendar({
         },
         onRangeUpdate(range) {
           autoScrollRef.current(range);
+        },
+        onSelectedDateUpdate(date) {
+          selectedDateRef.current = date;
         },
       },
     },
@@ -222,6 +231,14 @@ export function CrmCalendar({
     calendarRootRef,
     currentView === "day" || currentView === "week",
   );
+
+  useCalendarKeyboardNav({
+    enabled: Boolean(calendar),
+    currentView,
+    panelOpen,
+    controlsPlugin,
+    selectedDateRef,
+  });
 
   const handlePanelOpenChange = useCallback((open: boolean) => {
     setPanelOpen(open);
@@ -293,7 +310,12 @@ export function CrmCalendar({
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-1 overflow-hidden px-2 pb-2 pt-1 [&_.sx-react-calendar-wrapper]:col-start-1 [&_.sx-react-calendar-wrapper]:row-start-1">
+      <div
+        className="grid min-h-0 flex-1 grid-cols-1 grid-rows-1 overflow-hidden px-2 pb-2 pt-1 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_.sx-react-calendar-wrapper]:col-start-1 [&_.sx-react-calendar-wrapper]:row-start-1"
+        tabIndex={0}
+        aria-keyshortcuts="ArrowLeft ArrowRight T"
+        aria-label="Calendar. Arrow keys move by day, week, or month. T jumps to today."
+      >
         <ScheduleXCalendar calendarApp={calendar} />
       </div>
 

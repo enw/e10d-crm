@@ -6,7 +6,12 @@ import { updateContact } from "@/lib/contacts/update";
 import { addNote } from "@/lib/interactions";
 import type { ContactUpdateInput } from "@/lib/sync/user-overrides";
 import { enrichContact } from "@/lib/enrichment/pipeline";
-import { assignTagToContact, removeTagFromContact } from "@/lib/tags";
+import {
+  assignTagToContact,
+  assignTagToContacts,
+  removeTagFromContact,
+  removeTagFromContacts,
+} from "@/lib/tags";
 
 export async function assignTagAction(contactId: string, tagName: string) {
   await assignTagToContact(contactId, tagName);
@@ -18,6 +23,36 @@ export async function removeTagAction(contactId: string, tagId: string) {
   await removeTagFromContact(contactId, tagId);
   revalidatePath("/contacts");
   revalidatePath(`/contacts/${contactId}`);
+}
+
+export async function bulkAssignTagAction(
+  contactIds: string[],
+  tagName: string,
+) {
+  if (contactIds.length === 0) {
+    return;
+  }
+
+  await assignTagToContacts(contactIds, tagName);
+  revalidatePath("/contacts");
+  for (const contactId of contactIds) {
+    revalidatePath(`/contacts/${contactId}`);
+  }
+}
+
+export async function bulkRemoveTagAction(
+  contactIds: string[],
+  tagId: string,
+) {
+  if (contactIds.length === 0) {
+    return;
+  }
+
+  await removeTagFromContacts(contactIds, tagId);
+  revalidatePath("/contacts");
+  for (const contactId of contactIds) {
+    revalidatePath(`/contacts/${contactId}`);
+  }
 }
 
 export async function addNoteAction(contactId: string, content: string) {

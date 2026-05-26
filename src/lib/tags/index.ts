@@ -102,3 +102,21 @@ export async function removeTagFromContact(contactId: string, tagId: string) {
     metadata: { tagId: tag.id },
   });
 }
+
+export async function assignTagToContacts(
+  contactIds: string[],
+  tagName: string,
+) {
+  for (const contactId of contactIds) {
+    await assignTagToContact(contactId, tagName);
+  }
+}
+
+export async function removeTagFromContacts(
+  contactIds: string[],
+  tagId: string,
+) {
+  for (const contactId of contactIds) {
+    await removeTagFromContact(contactId, tagId);
+  }
+}

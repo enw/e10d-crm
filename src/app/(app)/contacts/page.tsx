@@ -2,11 +2,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { AccountLegend } from "@/components/account-legend";
-import { AccountSourceDots } from "@/components/account-color-dot";
 import { ContactSearchForm } from "@/components/contact-search-form";
-import { NextMeetingBadge } from "@/components/next-meeting-badge";
+import { ContactsListWithSelection } from "@/components/contacts-list-with-selection";
 import { TagFilter } from "@/components/tag-filter";
-import { Badge } from "@/components/ui/badge";
 import { listGoogleAccountSources } from "@/lib/google/accounts";
 import { getNextMeetingsForContacts } from "@/lib/sync/calendar-attendees";
 import { searchContacts } from "@/lib/sync/contacts";
@@ -42,6 +40,17 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   const nextMeetings = await getNextMeetingsForContacts(
     contacts.map((contact) => contact.id),
   );
+
+  const contactRows = contacts.map((contact) => {
+    const nextMeeting = nextMeetings.get(contact.id);
+    return {
+      ...contact,
+      nextMeetingLabel: nextMeeting
+        ? formatNextMeeting(nextMeeting.startTime)
+        : null,
+      nextMeetingGoogleAccountId: nextMeeting?.googleAccountId ?? null,
+    };
+  });
 
   return (
     <main className="mx-auto flex w-full max-w-5xl min-h-0 flex-1 flex-col overflow-hidden px-4 py-6 md:px-6">
@@ -85,56 +94,11 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
             )}
           </section>
         ) : (
-          <ul className="divide-y divide-border rounded-sm border border-border bg-card">
-            {contacts.map((contact) => {
-              const nextMeeting = nextMeetings.get(contact.id);
-              return (
-                <li key={contact.id}>
-                  <Link
-                    href={`/contacts/${contact.id}`}
-                    className="block px-4 py-3 hover:bg-muted/50"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex min-w-0 flex-1 items-start gap-2">
-                        <AccountSourceDots
-                          accountIds={contact.googleAccountIds}
-                          accounts={accountSources}
-                          className="mt-1.5"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-medium">
-                            {contact.displayName ||
-                              contact.emails[0] ||
-                              "Unknown"}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {contact.emails[0] ?? "No email"}
-                            {contact.company ? ` · ${contact.company}` : ""}
-                          </p>
-                        </div>
-                      </div>
-                      {nextMeeting ? (
-                        <NextMeetingBadge
-                          label={formatNextMeeting(nextMeeting.startTime)}
-                          googleAccountId={nextMeeting.googleAccountId}
-                          accountSources={accountSources}
-                        />
-                      ) : null}
-                    </div>
-                    {contact.tags.length > 0 ? (
-                      <div className="mt-2 flex flex-wrap gap-1 pl-5">
-                        {contact.tags.map((tagItem) => (
-                          <Badge key={tagItem.id} variant="outline">
-                            {tagItem.name}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <ContactsListWithSelection
+            contacts={contactRows}
+            tags={tags}
+            accountSources={accountSources}
+          />
         )}
       </div>
     </main>

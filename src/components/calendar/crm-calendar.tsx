@@ -18,6 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AccountLegend } from "@/components/account-legend";
 import { EventPrepPanel } from "@/components/calendar/event-prep-panel";
+import { useCurrentTimeIndicator } from "@/components/calendar/use-current-time-indicator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -25,6 +26,13 @@ import {
   sortAccountSources,
   type AccountSource,
 } from "@/lib/google/account-colors";
+import type { DateRange } from "@/lib/calendar/auto-scroll";
+import {
+  pickScrollTargetForDay,
+  pickScrollTargetForWeek,
+  scrollTimeGridToDefault,
+  scrollTimeGridToEventId,
+} from "@/lib/calendar/auto-scroll";
 import type { CalendarEventFeedItem } from "@/lib/sync/calendar-attendees";
 
 const DATE_GRID_EXPANDED_KEY = "e10d-calendar-date-grid-expanded";
@@ -91,8 +99,42 @@ export function CrmCalendar({
   const [dateGridExpanded, setDateGridExpanded] = useState(false);
   const [allDayCount, setAllDayCount] = useState(0);
   const calendarRootRef = useRef<HTMLDivElement>(null);
+  const eventsRef = useRef(initialEvents);
+  const currentViewRef = useRef(currentView);
+  const autoScrollRef = useRef<(range: DateRange) => void>(() => {});
   const [controlsPlugin] = useState(() => createCalendarControlsPlugin());
   const [eventsPlugin] = useState(() => createEventsServicePlugin());
+
+  eventsRef.current = initialEvents;
+  currentViewRef.current = currentView;
+
+  autoScrollRef.current = (range) => {
+    const root = calendarRootRef.current;
+    const view = currentViewRef.current;
+    if (!root || view === "month-grid") {
+      return;
+    }
+
+    const timeZone = Temporal.Now.timeZoneId();
+    const selectedDate = range.start.toPlainDate();
+    const target =
+      view === "day"
+        ? pickScrollTargetForDay(eventsRef.current, selectedDate, timeZone)
+        : pickScrollTargetForWeek(eventsRef.current, range, timeZone);
+
+    const attemptScroll = (attemptsLeft: number) => {
+      if (target && scrollTimeGridToEventId(root, target.id)) {
+        return;
+      }
+      if (attemptsLeft > 0) {
+        requestAnimationFrame(() => attemptScroll(attemptsLeft - 1));
+        return;
+      }
+      scrollTimeGridToDefault(root, selectedDate, timeZone);
+    };
+
+    requestAnimationFrame(() => attemptScroll(6));
+  };
 
   const calendar = useNextCalendarApp(
     {
@@ -108,6 +150,9 @@ export function CrmCalendar({
         onEventClick(calendarEvent) {
           setSelectedEventId(String(calendarEvent.id));
           setPanelOpen(true);
+        },
+        onRangeUpdate(range) {
+          autoScrollRef.current(range);
         },
       },
     },
@@ -156,6 +201,7 @@ export function CrmCalendar({
   const setView = useCallback(
     (view: string) => {
       setCurrentView(view);
+      currentViewRef.current = view;
       controlsPlugin.setView(view);
     },
     [controlsPlugin],
@@ -171,6 +217,11 @@ export function CrmCalendar({
 
   const showDateGridToggle =
     (currentView === "day" || currentView === "week") && allDayCount > 0;
+
+  useCurrentTimeIndicator(
+    calendarRootRef,
+    currentView === "day" || currentView === "week",
+  );
 
   const handlePanelOpenChange = useCallback((open: boolean) => {
     setPanelOpen(open);

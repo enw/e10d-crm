@@ -221,3 +221,23 @@
 .crm-calendar--date-grid-collapsed .sx__date-grid {
   display: none;
 }
+
+.crm-calendar .crm-now-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-top: 2px solid var(--destructive);
+}
+
+.crm-calendar .crm-now-line::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--destructive);
+}

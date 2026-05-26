@@ -217,3 +217,7 @@
 .crm-calendar .sx__event {
   border-radius: var(--radius-sm) !important;
 }
+
+.crm-calendar--date-grid-collapsed .sx__date-grid {
+  display: none;
+}

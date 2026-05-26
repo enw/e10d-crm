@@ -12,11 +12,13 @@ import {
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { ScheduleXCalendar, useNextCalendarApp } from "@schedule-x/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AccountLegend } from "@/components/account-legend";
 import { EventPrepPanel } from "@/components/calendar/event-prep-panel";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   buildScheduleXCalendars,
@@ -24,6 +26,14 @@ import {
   type AccountSource,
 } from "@/lib/google/account-colors";
 import type { CalendarEventFeedItem } from "@/lib/sync/calendar-attendees";
+
+const DATE_GRID_EXPANDED_KEY = "e10d-calendar-date-grid-expanded";
+
+function countDateGridEvents(root: HTMLElement) {
+  return root.querySelectorAll(
+    ".sx__date-grid-event:not(.sx__date-grid-event--copy)",
+  ).length;
+}
 
 type CrmCalendarProps = {
   initialEvents: CalendarEventFeedItem[];
@@ -77,6 +87,10 @@ export function CrmCalendar({
     initialEventId ?? null,
   );
   const [panelOpen, setPanelOpen] = useState(Boolean(initialEventId));
+  const [currentView, setCurrentView] = useState("day");
+  const [dateGridExpanded, setDateGridExpanded] = useState(false);
+  const [allDayCount, setAllDayCount] = useState(0);
+  const calendarRootRef = useRef<HTMLDivElement>(null);
   const [controlsPlugin] = useState(() => createCalendarControlsPlugin());
   const [eventsPlugin] = useState(() => createEventsServicePlugin());
 
@@ -114,15 +128,49 @@ export function CrmCalendar({
   }, [calendar, resolvedTheme]);
 
   useEffect(() => {
+    setDateGridExpanded(
+      localStorage.getItem(DATE_GRID_EXPANDED_KEY) === "true",
+    );
+  }, []);
+
+  useEffect(() => {
+    const root = calendarRootRef.current;
+    if (!root || !calendar) {
+      return;
+    }
+
+    const updateCount = () => {
+      setAllDayCount(countDateGridEvents(root));
+    };
+
+    updateCount();
+    const observer = new MutationObserver(updateCount);
+    observer.observe(root, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [calendar, currentView, initialEvents]);
+
+  useEffect(() => {
     eventsPlugin.set(feedToScheduleX(initialEvents));
   }, [initialEvents, eventsPlugin]);
 
   const setView = useCallback(
     (view: string) => {
+      setCurrentView(view);
       controlsPlugin.setView(view);
     },
     [controlsPlugin],
   );
+
+  const toggleDateGrid = useCallback(() => {
+    setDateGridExpanded((expanded) => {
+      const next = !expanded;
+      localStorage.setItem(DATE_GRID_EXPANDED_KEY, String(next));
+      return next;
+    });
+  }, []);
+
+  const showDateGridToggle =
+    (currentView === "day" || currentView === "week") && allDayCount > 0;
 
   const handlePanelOpenChange = useCallback((open: boolean) => {
     setPanelOpen(open);
@@ -140,21 +188,47 @@ export function CrmCalendar({
   }
 
   return (
-    <div className="crm-calendar flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
+    <div
+      ref={calendarRootRef}
+      className={`crm-calendar flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden${
+        showDateGridToggle && !dateGridExpanded
+          ? " crm-calendar--date-grid-collapsed"
+          : ""
+      }`}
+    >
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border px-4 py-3 md:px-6">
-        <Tabs defaultValue="day" onValueChange={setView}>
-          <TabsList className="h-8">
-            <TabsTrigger value="day" className="px-2.5 text-xs">
-              Day
-            </TabsTrigger>
-            <TabsTrigger value="week" className="px-2.5 text-xs">
-              Week
-            </TabsTrigger>
-            <TabsTrigger value="month-grid" className="px-2.5 text-xs">
-              Month
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex flex-wrap items-center gap-2">
+          <Tabs value={currentView} onValueChange={setView}>
+            <TabsList className="h-8">
+              <TabsTrigger value="day" className="px-2.5 text-xs">
+                Day
+              </TabsTrigger>
+              <TabsTrigger value="week" className="px-2.5 text-xs">
+                Week
+              </TabsTrigger>
+              <TabsTrigger value="month-grid" className="px-2.5 text-xs">
+                Month
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {showDateGridToggle ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1 px-2.5 text-xs"
+              onClick={toggleDateGrid}
+              aria-expanded={dateGridExpanded}
+            >
+              {dateGridExpanded ? (
+                <ChevronUp className="size-3.5" aria-hidden />
+              ) : (
+                <ChevronDown className="size-3.5" aria-hidden />
+              )}
+              All-day ({allDayCount})
+            </Button>
+          ) : null}
+        </div>
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           {orderedAccounts.length > 0 ? (
             <AccountLegend

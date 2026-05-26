@@ -8,6 +8,7 @@ import { ContactTagManager } from "@/components/contact-tag-manager";
 import { UnifiedTimeline } from "@/components/unified-timeline";
 import { Button } from "@/components/ui/button";
 import { listGoogleAccountSources } from "@/lib/google/accounts";
+import { isLeadPureConfigured } from "@/lib/enrichment/leadpure";
 import { getLatestEnrichmentRun } from "@/lib/enrichment/pipeline";
 import { listInteractionsForContact } from "@/lib/interactions";
 import { listMeetingsForContact } from "@/lib/sync/calendar-attendees";
@@ -80,6 +81,9 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
     readEnrichmentUrl(enrichmentBlob, "twitterUrl") ??
     readEnrichmentUrl(enrichmentBlob, "twitter");
   const title = contact.displayName || contact.emails[0] || "Unknown contact";
+  const leadPureEnabled = isLeadPureConfigured();
+  const showEnrichmentSection =
+    leadPureEnabled || Boolean(enrichmentBlob) || Boolean(latestEnrichment);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-y-auto px-4 py-8 md:px-6">
@@ -156,53 +160,57 @@ export default async function ContactDossierPage({ params }: ContactPageProps) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-muted/30 p-4">
-          <h2 className="text-sm font-medium">Enrichment</h2>
-          {enrichmentBlob ? (
-            <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-              {latestEnrichment ? (
-                <p>
-                  Last run {latestEnrichment.runAt.toLocaleString()} ·{" "}
-                  {latestEnrichment.status}
-                </p>
-              ) : null}
-              {linkedinUrl ? (
-                <p>
-                  LinkedIn:{" "}
-                  <a
-                    href={linkedinUrl}
-                    className="text-foreground underline"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {linkedinUrl}
-                  </a>
-                </p>
-              ) : null}
-              {twitterUrl ? (
-                <p>
-                  Twitter/X:{" "}
-                  <a
-                    href={twitterUrl}
-                    className="text-foreground underline"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {twitterUrl}
-                  </a>
-                </p>
-              ) : null}
-            </div>
-          ) : (
-            <p className="mt-1 text-sm text-muted-foreground">
-              Not enriched yet. Run LeadPure to populate company, title, and
-              social profiles.
-            </p>
-          )}
-          <div className="mt-3">
-            <EnrichContactButton contactId={contact.id} />
+        {showEnrichmentSection ? (
+          <div className="rounded-xl border border-border bg-muted/30 p-4">
+            <h2 className="text-sm font-medium">Enrichment</h2>
+            {enrichmentBlob ? (
+              <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                {latestEnrichment ? (
+                  <p>
+                    Last run {latestEnrichment.runAt.toLocaleString()} ·{" "}
+                    {latestEnrichment.status}
+                  </p>
+                ) : null}
+                {linkedinUrl ? (
+                  <p>
+                    LinkedIn:{" "}
+                    <a
+                      href={linkedinUrl}
+                      className="text-foreground underline"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {linkedinUrl}
+                    </a>
+                  </p>
+                ) : null}
+                {twitterUrl ? (
+                  <p>
+                    Twitter/X:{" "}
+                    <a
+                      href={twitterUrl}
+                      className="text-foreground underline"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {twitterUrl}
+                    </a>
+                  </p>
+                ) : null}
+              </div>
+            ) : leadPureEnabled ? (
+              <p className="mt-1 text-sm text-muted-foreground">
+                Not enriched yet. Run enrichment to populate company, title,
+                and social profiles.
+              </p>
+            ) : null}
+            {leadPureEnabled ? (
+              <div className="mt-3">
+                <EnrichContactButton contactId={contact.id} />
+              </div>
+            ) : null}
           </div>
-        </div>
+        ) : null}
       </section>
     </main>
   );

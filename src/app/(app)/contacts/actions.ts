@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { updateContact } from "@/lib/contacts/update";
 import { addNote } from "@/lib/interactions";
 import type { ContactUpdateInput } from "@/lib/sync/user-overrides";
+import { isLeadPureConfigured } from "@/lib/enrichment/leadpure";
 import { enrichContact } from "@/lib/enrichment/pipeline";
 import {
   assignTagToContact,
@@ -72,6 +73,10 @@ export async function updateContactAction(
 }
 
 export async function enrichContactAction(contactId: string) {
+  if (!isLeadPureConfigured()) {
+    throw new Error("Contact enrichment is not configured");
+  }
+
   await enrichContact(contactId);
   revalidatePath("/contacts");
   revalidatePath(`/contacts/${contactId}`);

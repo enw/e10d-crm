@@ -2,9 +2,22 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   enrichWithLeadPure,
+  isLeadPureConfigured,
   mapLeadPureResponse,
 } from "@/lib/enrichment/leadpure";
 import { mergeEnrichmentIntoContact } from "@/lib/enrichment/pipeline";
+
+describe("isLeadPureConfigured", () => {
+  it("returns false for missing or blank keys", () => {
+    expect(isLeadPureConfigured(undefined)).toBe(false);
+    expect(isLeadPureConfigured("")).toBe(false);
+    expect(isLeadPureConfigured("   ")).toBe(false);
+  });
+
+  it("returns true when a key is present", () => {
+    expect(isLeadPureConfigured("test-key")).toBe(true);
+  });
+});
 
 describe("mapLeadPureResponse", () => {
   it("maps common enrichment fields", () => {

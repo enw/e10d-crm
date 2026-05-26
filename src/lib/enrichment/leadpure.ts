@@ -2,6 +2,18 @@ import type { EnrichmentResult } from "@/lib/enrichment/types";
 
 type FetchFn = typeof fetch;
 
+export function isLeadPureConfigured(apiKey = process.env.LEADPURE_API_KEY): boolean {
+  return Boolean(apiKey?.trim());
+}
+
+/** Debug logging only when LeadPure is configured (avoids noise in local dev). */
+export function leadPureLog(...args: unknown[]): void {
+  if (!isLeadPureConfigured()) {
+    return;
+  }
+  console.log(...args);
+}
+
 function readString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
@@ -48,7 +60,7 @@ export async function enrichWithLeadPure(
   },
 ): Promise<EnrichmentResult> {
   const apiKey = options?.apiKey ?? process.env.LEADPURE_API_KEY;
-  if (!apiKey) {
+  if (!isLeadPureConfigured(apiKey)) {
     throw new Error("LEADPURE_API_KEY is not configured");
   }
 

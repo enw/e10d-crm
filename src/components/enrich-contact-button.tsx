@@ -36,7 +36,7 @@ export function EnrichContactButton({ contactId }: { contactId: string }) {
         disabled={pending}
         className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
       >
-        {pending ? "Enriching…" : "Enrich with LeadPure"}
+        {pending ? "Enriching…" : "Enrich contact"}
       </button>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </div>

@@ -260,9 +260,11 @@ function CommandPaletteSurface({
     [closePalette, router],
   );
 
+  const { leadPureEnabled } = useCommandPalette();
+
   const scopedActions = useMemo(
-    () => buildScopedActions(scope, eventContext),
-    [eventContext, scope],
+    () => buildScopedActions(scope, eventContext, leadPureEnabled),
+    [eventContext, leadPureEnabled, scope],
   );
 
   const showActionsFirst = mode === "actions" && scopedActions.length > 0;
@@ -516,10 +518,11 @@ type ScopedAction = {
 function buildScopedActions(
   scope: CommandScope,
   eventContext: CalendarEventContext | null,
+  leadPureEnabled: boolean,
 ): ScopedAction[] {
   switch (scope.type) {
-    case "dossier":
-      return [
+    case "dossier": {
+      const actions: ScopedAction[] = [
         {
           id: "add-note",
           label: "Add note",
@@ -531,13 +534,17 @@ function buildScopedActions(
           icon: Pencil,
           href: `/contacts/${scope.contactId}/edit`,
         },
-        {
+      ];
+      if (leadPureEnabled) {
+        actions.push({
           id: "enrich-contact",
           label: "Enrich contact",
           icon: Sparkles,
           run: () => enrichContactAction(scope.contactId),
-        },
-      ];
+        });
+      }
+      return actions;
+    }
     case "edit":
       return [
         {

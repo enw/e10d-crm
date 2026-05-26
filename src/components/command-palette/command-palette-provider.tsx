@@ -15,6 +15,7 @@ export type CommandPaletteMode = "search" | "actions";
 type CommandPaletteContextValue = {
   open: boolean;
   mode: CommandPaletteMode;
+  leadPureEnabled: boolean;
   openPalette: (mode?: CommandPaletteMode) => void;
   closePalette: () => void;
 };
@@ -23,7 +24,13 @@ const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(
   null,
 );
 
-export function CommandPaletteProvider({ children }: { children: ReactNode }) {
+export function CommandPaletteProvider({
+  children,
+  leadPureEnabled = false,
+}: {
+  children: ReactNode;
+  leadPureEnabled?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<CommandPaletteMode>("search");
 
@@ -54,8 +61,8 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
   }, [closePalette, open, openPalette]);
 
   const value = useMemo(
-    () => ({ open, mode, openPalette, closePalette }),
-    [closePalette, mode, open, openPalette],
+    () => ({ open, mode, leadPureEnabled, openPalette, closePalette }),
+    [closePalette, leadPureEnabled, mode, open, openPalette],
   );
 
   return (

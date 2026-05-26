@@ -9,6 +9,7 @@ import {
 import { publicAppUrl } from "@/lib/auth/app-url";
 import { listGoogleAccounts } from "@/lib/google/accounts";
 import { listContactIdsForBatchEnrichment } from "@/lib/enrichment/batch";
+import { isLeadPureConfigured } from "@/lib/enrichment/leadpure";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,10 @@ type SettingsPageProps = {
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const params = await searchParams;
   const accounts = await listGoogleAccounts();
-  const pendingEnrichmentIds = await listContactIdsForBatchEnrichment();
+  const leadPureEnabled = isLeadPureConfigured();
+  const pendingEnrichmentIds = leadPureEnabled
+    ? await listContactIdsForBatchEnrichment()
+    : [];
   const oauthError = googleOAuthErrorMessage(params.error);
   const usingPlaygroundClient = isGooglePlaygroundClientId(
     process.env.GOOGLE_CLIENT_ID,
@@ -66,16 +70,18 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </p>
       </section>
 
-      <section className="mt-8 space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-medium text-zinc-900">Enrichment</h2>
-          <BatchEnrichButton pendingCount={pendingEnrichmentIds.length} />
-        </div>
-        <p className="text-sm text-zinc-500">
-          Batch-enrich contacts that have not succeeded yet. Transient LeadPure
-          errors retry with exponential backoff (1s → 60s, up to 5 retries).
-        </p>
-      </section>
+      {leadPureEnabled ? (
+        <section className="mt-8 space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-lg font-medium text-zinc-900">Enrichment</h2>
+            <BatchEnrichButton pendingCount={pendingEnrichmentIds.length} />
+          </div>
+          <p className="text-sm text-zinc-500">
+            Batch-enrich contacts that have not succeeded yet. Transient errors
+            retry with exponential backoff (1s → 60s, up to 5 retries).
+          </p>
+        </section>
+      ) : null}
 
       <section className="mt-8 space-y-4">
         <div className="flex items-center justify-between gap-4">

@@ -125,9 +125,15 @@ function AppShellFrame({ children }: { children: ReactNode }) {
   );
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  leadPureEnabled = false,
+}: {
+  children: ReactNode;
+  leadPureEnabled?: boolean;
+}) {
   return (
-    <CommandPaletteProvider>
+    <CommandPaletteProvider leadPureEnabled={leadPureEnabled}>
       <AppShellFrame>{children}</AppShellFrame>
       <Suspense fallback={null}>
         <CommandPalette />
